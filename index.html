@@ -628,111 +628,145 @@ const db = getFirestore(app);
 
 // =============================================
 // Deux jeux de propositions à ~100 kg CO₂
+// Sources : ADEME Base Carbone & Impact CO₂
+//   Avion court-courrier : 0,224 kg/km
+//   Voiture thermique : 0,192 kg/km
+//   Voiture électrique : 0,020 kg/km
+//   TGV : 0,0023 kg/km
+//   Bus diesel : 0,114 kg/km
+//   Scooter thermique : 0,060 kg/km
+//   Bœuf : 28,0 kg CO₂/kg — Veau : 22,5
+//   Crevettes : 20,3 — Porc : 6,67 — Poulet : 4,56
+//   Fromage pâte dure : 6,28 — Lait : 1,15/L
+//   Smartphone : 80 — Tablette : 87 — Écran : 93
+//   Box internet : 81 — PC fixe pro : 259
+//   Streaming : 0,064 kg/h — Visio : 0,057 kg/h
+//   E-mail : 0,0025 kg — Élec. France : 0,057 kg/kWh
 // =============================================
 const standardProposals = [
-  "Prendre un vol Paris → Marseille aller simple (classe éco)",
-  "Faire un aller-retour Paris → Londres en avion (classe éco)",
-  "Conduire seul 700 km sur autoroute avec une voiture essence",
-  "Partir un week-end à Barcelone en avion (A/R depuis Paris)",
-  "Faire 3 mois de trajets quotidiens en voiture (10 km A/R)",
-  "Manger un steak de bœuf par semaine pendant 3 mois",
-  "Manger de la viande rouge tous les soirs pendant 3 semaines",
-  "Acheter un smartphone reconditionné haut de gamme",
+  // Transport aérien (~0,224 kg/km)
+  "Prendre un vol Paris → Toulouse aller simple (classe éco)",
+  "Prendre un vol Paris → Lyon aller simple",
+  "Prendre un vol Paris → Bordeaux aller simple",
+  "Prendre un vol A/R Paris → Nantes",
+  // Transport voiture thermique (~0,192 kg/km)
+  "Conduire seul 520 km sur autoroute (voiture thermique)",
+  "Faire un Paris → Lyon en voiture thermique seul",
+  "Faire un A/R Paris → Bruxelles en voiture seul",
+  "Se rendre au travail en voiture (10 km A/R) pendant 10 semaines",
+  "Se rendre au travail en voiture (20 km A/R) pendant 5 semaines",
+  "Faire un Paris → Marseille en voiture seul (aller simple)",
+  // Transport divers
+  "Se déplacer en scooter thermique 15 km/jour pendant 4 mois",
+  "Rouler 5 000 km en voiture électrique",
+  "Faire 43 000 km en TGV",
+  // Alimentation — viande & poisson
+  "Manger un steak de bœuf (200 g) par semaine pendant 4 mois",
+  "Consommer 5 kg de crevettes",
+  "Manger du veau (200 g) par semaine pendant 5 mois",
+  "Manger un burger au bœuf chaque semaine pendant 5 mois",
+  "Manger du poulet (200 g) chaque jour pendant 3 mois",
+  "Manger du porc (200 g) chaque jour pendant 2 mois et demi",
+  // Alimentation — produits laitiers & boissons
+  "Manger du fromage à pâte dure (comté) 100 g/jour pendant 5 mois",
+  "Boire 1 L de lait de vache par jour pendant 3 mois",
+  "Manger 50 g de chocolat noir par jour pendant 1 an",
+  "Boire du café : 1 kg de torréfié par mois pendant 1 an",
+  // Numérique — fabrication (ADEME Impact CO₂)
+  "Acheter un smartphone neuf",
   "Acheter une tablette neuve (type iPad)",
-  "Chauffer une pièce au radiateur électrique tout l'hiver",
-  "Laisser un radiateur d'appoint allumé 8h/jour pendant 2 mois",
-  "Prendre sa voiture pour aller au travail pendant 5 semaines (20 km A/R)",
-  "Utiliser ChatGPT intensivement pendant 3 mois",
-  "Regarder Netflix en 4K, 3h par soir, pendant 6 mois",
-  "Acheter 5 vêtements neufs en fast fashion chaque mois pendant 3 mois",
-  "Recevoir un colis express de Chine chaque semaine pendant 2 mois",
-  "Acheter un fauteuil de bureau neuf importé d'Asie",
-  "Faire une mini-croisière de 3 jours en Méditerranée",
-  "Renouveler 10 pièces de sa garde-robe en synthétique neuf",
-  "Climatiser une pièce tout l'été (juin–septembre) en France",
-  "Faire un road-trip de 5 jours en voiture de location (1 500 km)",
-  "Acheter 3 paires de chaussures en cuir importées",
-  "Commander un meuble en bois massif livré depuis l'Europe de l'Est",
-  "Prendre l'avion 1 fois pour un déplacement pro (Paris → Lyon A/R)",
-  "Boire 2 bouteilles de whisky importé par mois pendant 4 mois",
-  "Manger du fromage à pâte dure (comté, parmesan) tous les jours pendant 4 mois",
-  "Acheter un écran PC 32 pouces neuf",
-  "Refaire la peinture d'un appartement (matériaux + artisan)",
-  "Aller à la salle de sport en voiture (5 km A/R) 4×/semaine pendant 3 mois",
-  "Prendre des douches de 10 min au chauffe-eau électrique pendant 6 mois",
-  "Acheter un robot aspirateur neuf",
-  "Faire un vol intérieur A/R (ex. Paris → Toulouse)",
-  "Manger un burger au bœuf chaque midi pendant 6 semaines",
-  "Fabriquer la batterie d'un vélo électrique neuf",
-  "Chauffer un garage non isolé tout l'hiver",
-  "Acheter une console de jeux vidéo neuve (PS5 / Xbox)",
-  "Se faire livrer ses courses à domicile chaque semaine pendant 4 mois",
-  "Faire 3 séances de laser dermatologique en clinique",
-  "Boire un café en capsule par jour pendant 18 mois",
-  "Acheter une montre connectée neuve",
-  "Faire venir un artisan en camionnette diesel pour une intervention (A/R 100 km + matériaux)",
-  "Aller voir un match de foot à l'étranger en avion (A/R week-end)",
-  "Faire un aller-retour Paris → Amsterdam en voiture seul",
-  "Manger des crevettes importées par avion 1×/semaine pendant 3 mois",
-  "Laisser son PC fixe allumé 24h/24 pendant 4 mois",
-  "Prendre l'avion Paris → Bordeaux au lieu du train (A/R)",
-  "Utiliser une imprimante laser couleur au bureau pendant 1 an",
-  "Tondre 500 m² de pelouse au thermique chaque semaine pendant 2 étés",
-  "Boire 1 L de lait de vache par semaine pendant 3 ans",
-  "Prendre un taxi/VTC pour tous ses trajets en ville pendant 1 mois"
+  "Acheter un écran d'ordinateur 27 pouces neuf",
+  "Acheter une box internet neuve",
+  // Numérique — usage
+  "Regarder du streaming vidéo 4 h/jour pendant 1 an",
+  "Laisser un PC fixe (300 W) allumé 24h/24 pendant 8 mois",
+  "Envoyer 100 e-mails professionnels par jour pendant 1 an",
+  // Énergie & logement (élec. France ~0,057 kg/kWh)
+  "Chauffer une pièce de 20 m² au radiateur électrique tout l'hiver",
+  "Climatiser une pièce 8 h/jour pendant 3 mois en été",
+  "Laisser un radiateur d'appoint (2 kW) 8 h/jour pendant 4 mois",
+  "Faire fonctionner un chauffe-eau électrique (3 personnes) pendant 1 an",
+  "Chauffer un garage non isolé (30 m²) tout l'hiver",
+  "Faire tourner un lave-linge à 60 °C, 5 fois/semaine, pendant 2 ans",
+  // Consommation — textile
+  "Acheter 15 t-shirts en coton neuf",
+  "Acheter 3 paires de chaussures neuves en cuir",
+  "Renouveler 10 pièces de sa garde-robe en textile synthétique",
+  "Acheter 4 jeans neufs",
+  // Consommation — mobilier & équipement
+  "Acheter un canapé neuf (fabrication + livraison)",
+  "Acheter un réfrigérateur neuf",
+  "Acheter un vélo électrique neuf (batterie incluse)",
+  "Commander un meuble en bois livré depuis l'Europe de l'Est",
+  // Divers
+  "Recevoir un colis express international chaque semaine pendant 2 mois",
+  "Imprimer 10 000 pages A4 sur imprimante laser",
+  "Boire 2 bouteilles de vin par semaine pendant 1 an",
+  "Prendre le bus diesel 10 km A/R chaque jour pendant 3 mois",
+  "Faire venir un artisan en camionnette diesel (A/R 100 km)",
+  "Consommer 2 avocats importés par avion chaque semaine pendant 1 an"
 ];
 
 const laboProposals = [
-  "Prendre un vol Paris → Marseille aller simple (classe éco)",
-  "Faire un aller-retour Paris → Londres en avion (classe éco)",
-  "Conduire seul 700 km sur autoroute avec une voiture essence",
-  "Partir un week-end à Barcelone en avion (A/R depuis Paris)",
-  "Faire 3 mois de trajets quotidiens en voiture (10 km A/R)",
-  "Manger un steak de bœuf par semaine pendant 3 mois",
-  "Manger de la viande rouge tous les soirs pendant 3 semaines",
-  "Acheter un smartphone reconditionné haut de gamme",
-  "Acheter une tablette neuve (type iPad)",
-  "Chauffer une pièce au radiateur électrique tout l'hiver",
-  "Laisser un radiateur d'appoint allumé 8h/jour pendant 2 mois",
-  "Prendre sa voiture pour aller au travail pendant 5 semaines (20 km A/R)",
-  "Utiliser ChatGPT intensivement pendant 3 mois",
-  "Regarder Netflix en 4K, 3h par soir, pendant 6 mois",
-  "Acheter 5 vêtements neufs en fast fashion chaque mois pendant 3 mois",
-  "Recevoir un colis express de Chine chaque semaine pendant 2 mois",
-  "Acheter un fauteuil de bureau neuf importé d'Asie",
-  "Faire une mini-croisière de 3 jours en Méditerranée",
-  "Renouveler 10 pièces de sa garde-robe en synthétique neuf",
-  "Climatiser une pièce tout l'été (juin–septembre) en France",
-  "Faire un road-trip de 5 jours en voiture de location (1 500 km)",
-  "Acheter 3 paires de chaussures en cuir importées",
-  "Commander un meuble en bois massif livré depuis l'Europe de l'Est",
-  "Prendre l'avion 1 fois pour un déplacement pro (Paris → Lyon A/R)",
-  "Boire 2 bouteilles de whisky importé par mois pendant 4 mois",
-  "Manger du fromage à pâte dure (comté, parmesan) tous les jours pendant 4 mois",
-  "Acheter un écran PC 32 pouces neuf",
-  "Refaire la peinture d'un appartement (matériaux + artisan)",
-  "Aller à la salle de sport en voiture (5 km A/R) 4×/semaine pendant 3 mois",
-  "Prendre des douches de 10 min au chauffe-eau électrique pendant 6 mois",
-  "Acheter un robot aspirateur neuf",
-  "Faire un vol intérieur A/R (ex. Paris → Toulouse)",
-  "Manger un burger au bœuf chaque midi pendant 6 semaines",
-  "Fabriquer la batterie d'un vélo électrique neuf",
-  "Chauffer un garage non isolé tout l'hiver",
-  "Acheter une console de jeux vidéo neuve (PS5 / Xbox)",
-  "Se faire livrer ses courses à domicile chaque semaine pendant 4 mois",
-  "Faire 3 séances de laser dermatologique en clinique",
-  "Boire un café en capsule par jour pendant 18 mois",
-  "Acheter une montre connectée neuve",
-  "Faire venir un artisan en camionnette diesel pour une intervention (A/R 100 km + matériaux)",
-  "Aller voir un match de foot à l'étranger en avion (A/R week-end)",
-  "Faire un aller-retour Paris → Amsterdam en voiture seul",
-  "Manger des crevettes importées par avion 1×/semaine pendant 3 mois",
-  "Laisser son PC fixe allumé 24h/24 pendant 4 mois",
-  "Prendre l'avion Paris → Bordeaux au lieu du train (A/R)",
-  "Utiliser une imprimante laser couleur au bureau pendant 1 an",
-  "Tondre 500 m² de pelouse au thermique chaque semaine pendant 2 étés",
-  "Boire 1 L de lait de vache par semaine pendant 3 ans",
-  "Prendre un taxi/VTC pour tous ses trajets en ville pendant 1 mois"
+  // Missions & déplacements
+  "Vol A/R pour une conférence à Genève (depuis Paris)",
+  "Vol aller simple pour un séminaire à Toulouse",
+  "Vol A/R pour un jury de thèse à Marseille (depuis Paris)",
+  "Se rendre au labo en voiture (15 km A/R) pendant 8 semaines",
+  "Voiture A/R pour une mission de terrain (500 km)",
+  "Louer un utilitaire pour transporter du matériel (600 km A/R)",
+  "Envoyer un doctorant en voiture à une école d'été (A/R 700 km)",
+  // Calcul HPC (élec. France ~0,057 kg/kWh)
+  "Lancer une simulation CFD sur 10 nœuds pendant 2 semaines",
+  "Entraîner un modèle de deep learning sur 4 GPU pendant 6 semaines",
+  "Faire tourner un serveur de calcul (500 W) en continu pendant 5 mois",
+  "Exécuter un calcul par éléments finis sur 20 cœurs pendant 1 mois",
+  "Stocker 50 To de données expérimentales sur un NAS pendant 3 ans",
+  "Laisser 5 stations de travail allumées 24h/24 pendant 2 mois",
+  "Lancer un calcul Monte-Carlo massif sur un cluster pendant 3 semaines",
+  // Équipement de labo
+  "Acheter un oscilloscope numérique neuf",
+  "Acheter une alimentation stabilisée haute puissance pour le labo",
+  "Acheter une imprimante 3D FDM pour le labo",
+  "Acheter un analyseur de spectre neuf",
+  "Acheter un générateur de signaux neuf",
+  "Acheter 10 capteurs MEMS pour un banc de mesure",
+  "Remplacer un PC fixe du labo par un modèle neuf",
+  // Prototypage
+  "Imprimer 20 kg de PLA sur imprimante 3D",
+  "Faire usiner 50 pièces en aluminium par CNC",
+  "Fabriquer et assembler 20 circuits imprimés (PCB)",
+  "Découper 100 éprouvettes d'essai en acier (traction/fatigue)",
+  "Fabriquer un prototype de boîtier en aluminium fraisé CNC",
+  // Consommables du labo
+  "Consommer 250 L d'azote liquide au labo",
+  "Utiliser 30 L de solvants (acétone, éthanol) au labo en 1 an",
+  "Consommer 10 bouteilles de gaz (argon, azote) pour les expériences",
+  "Couler 750 kg de béton pour des éprouvettes de test",
+  "Utiliser 50 L de résine époxy pour la fabrication de composites",
+  "Consommer les fournitures jetables du labo pendant 1 semestre (gants, tubes, filtres)",
+  // Énergie du bâtiment
+  "Faire fonctionner la salle blanche du labo pendant 1 journée",
+  "Faire fonctionner une hotte aspirante 24h/24 pendant 2 mois",
+  "Chauffer un bureau de labo (25 m²) tout l'hiver (chauffage électrique)",
+  "Climatiser la salle serveur du labo pendant 3 semaines en été",
+  "Faire fonctionner les compresseurs d'air du labo pendant 6 mois",
+  // Terrain & mesures
+  "Déployer un réseau de capteurs sur le terrain (500 km en utilitaire)",
+  "Réaliser une campagne de mesures acoustiques sur 3 sites",
+  "Alimenter un groupe électrogène diesel pour mesures terrain (1 semaine)",
+  "Acheter et utiliser un drone de recherche pendant 1 an",
+  "Expédier 200 kg d'équipement scientifique par fret routier (1 000 km)",
+  // Enseignement
+  "Renouveler le parc de 10 multimètres et oscilloscopes de TP",
+  "Produire 500 polycopiés de cours de 100 pages",
+  "Acheter du petit matériel de TP (composants, câbles, connecteurs) pour 1 an",
+  "Équiper un poste étudiant avec un PC de bureau neuf",
+  // Publications & bureau
+  "Imprimer et expédier 50 posters scientifiques A0 en un an",
+  "Faire tourner un serveur de stockage de publications pendant 2 ans",
+  "Faire tourner un banc d'essai automatisé 24h/24 pendant 3 mois",
+  "Acheter un écran neuf pour un doctorant"
 ];
 
 // =============================================
