@@ -644,129 +644,137 @@ const db = getFirestore(app);
 //   E-mail : 0,0025 kg — Élec. France : 0,057 kg/kWh
 // =============================================
 const standardProposals = [
-  // Transport aérien (~0,224 kg/km)
-  "Prendre un vol Paris → Toulouse aller simple (classe éco)",
-  "Prendre un vol Paris → Lyon aller simple",
-  "Prendre un vol Paris → Bordeaux aller simple",
-  "Prendre un vol A/R Paris → Nantes",
-  // Transport voiture thermique (~0,192 kg/km)
-  "Conduire seul 520 km sur autoroute (voiture thermique)",
-  "Faire un Paris → Lyon en voiture thermique seul",
-  "Faire un A/R Paris → Bruxelles en voiture seul",
-  "Se rendre au travail en voiture (10 km A/R) pendant 10 semaines",
-  "Se rendre au travail en voiture (20 km A/R) pendant 5 semaines",
-  "Faire un Paris → Marseille en voiture seul (aller simple)",
-  // Transport divers
-  "Se déplacer en scooter thermique 15 km/jour pendant 4 mois",
-  "Rouler 5 000 km en voiture électrique",
-  "Faire 43 000 km en TGV",
-  // Alimentation — viande & poisson
-  "Manger un steak de bœuf (200 g) par semaine pendant 4 mois",
-  "Consommer 5 kg de crevettes",
-  "Manger du veau (200 g) par semaine pendant 5 mois",
-  "Manger un burger au bœuf chaque semaine pendant 5 mois",
-  "Manger du poulet (200 g) chaque jour pendant 3 mois",
-  "Manger du porc (200 g) chaque jour pendant 2 mois et demi",
-  // Alimentation — produits laitiers & boissons
-  "Manger du fromage à pâte dure (comté) 100 g/jour pendant 5 mois",
-  "Boire 1 L de lait de vache par jour pendant 3 mois",
-  "Manger 50 g de chocolat noir par jour pendant 1 an",
-  "Boire du café : 1 kg de torréfié par mois pendant 1 an",
-  // Numérique — fabrication (ADEME Impact CO₂)
-  "Acheter un smartphone neuf",
-  "Acheter une tablette neuve (type iPad)",
-  "Acheter un écran d'ordinateur 27 pouces neuf",
-  "Acheter une box internet neuve",
-  // Numérique — usage
-  "Regarder du streaming vidéo 4 h/jour pendant 1 an",
-  "Laisser un PC fixe (300 W) allumé 24h/24 pendant 8 mois",
-  "Envoyer 100 e-mails professionnels par jour pendant 1 an",
-  // Énergie & logement (élec. France ~0,057 kg/kWh)
-  "Chauffer une pièce de 20 m² au radiateur électrique tout l'hiver",
-  "Climatiser une pièce 8 h/jour pendant 3 mois en été",
-  "Laisser un radiateur d'appoint (2 kW) 8 h/jour pendant 4 mois",
-  "Faire fonctionner un chauffe-eau électrique (3 personnes) pendant 1 an",
-  "Chauffer un garage non isolé (30 m²) tout l'hiver",
-  "Faire tourner un lave-linge à 60 °C, 5 fois/semaine, pendant 2 ans",
-  // Consommation — textile
-  "Acheter 15 t-shirts en coton neuf",
-  "Acheter 3 paires de chaussures neuves en cuir",
-  "Renouveler 10 pièces de sa garde-robe en textile synthétique",
-  "Acheter 4 jeans neufs",
-  // Consommation — mobilier & équipement
-  "Acheter un canapé neuf (fabrication + livraison)",
-  "Acheter un réfrigérateur neuf",
-  "Acheter un vélo électrique neuf (batterie incluse)",
-  "Commander un meuble en bois livré depuis l'Europe de l'Est",
-  // Divers
-  "Recevoir un colis express international chaque semaine pendant 2 mois",
-  "Imprimer 10 000 pages A4 sur imprimante laser",
-  "Boire 2 bouteilles de vin par semaine pendant 1 an",
-  "Prendre le bus diesel 10 km A/R chaque jour pendant 3 mois",
-  "Faire venir un artisan en camionnette diesel (A/R 100 km)",
-  "Consommer 2 avocats importés par avion chaque semaine pendant 1 an"
+  // --- Transport : contexte éthique fort ---
+  "Prendre l'avion pour assister aux obsèques d'un proche à Marseille (A/R depuis Paris)",
+  "Prendre l'avion pour un week-end de loisirs à Barcelone (A/R depuis Paris)",
+  "Conduire 500 km pour rendre visite à un parent hospitalisé",
+  "Conduire 500 km pour un week-end gastronomique entre amis",
+  "Prendre l'avion pour accompagner son enfant à un concours national (A/R)",
+  "Prendre l'avion pour un enterrement de vie de célibataire à Porto (A/R)",
+  "Faire un A/R en voiture pour un entretien d'embauche décisif (600 km)",
+  "Faire un A/R en voiture pour un concert de son artiste préféré (600 km)",
+  "Se rendre au travail en voiture (20 km A/R) pendant 5 semaines, seul emploi accessible",
+  "Se rendre à la salle de sport en voiture (20 km A/R) pendant 5 semaines",
+  "Prendre le bus diesel chaque jour (10 km A/R) pendant 3 mois pour aller à l'école de ses enfants",
+  "Prendre le bus diesel chaque jour (10 km A/R) pendant 3 mois pour éviter le vélo en hiver",
+
+  // --- Alimentation : dilemmes culturels, santé, plaisir ---
+  "Manger de la viande rouge (200 g) chaque soir pendant 3 semaines, prescrit par un médecin (anémie sévère)",
+  "Manger de la viande rouge (200 g) chaque soir pendant 3 semaines, par habitude culinaire",
+  "Consommer 5 kg de crevettes lors d'un repas de fête de famille traditionnel",
+  "Consommer 5 kg de crevettes en livraison à domicile pour des apéros personnels",
+  "Manger du fromage local (comté) 100 g/jour pendant 5 mois, soutien aux producteurs de montagne",
+  "Manger du fromage importé 100 g/jour pendant 5 mois, commandé en ligne",
+  "Offrir un repas de bœuf français pour les 80 ans de sa grand-mère (20 convives)",
+  "Commander 20 burgers en livraison express pour une soirée foot entre copains",
+  "Boire du café équitable 1 tasse/jour pendant 1 an (soutien coopérative)",
+  "Boire des capsules aluminium 1 tasse/jour pendant 1 an (praticité)",
+
+  // --- Numérique : nécessité vs confort ---
+  "Acheter un smartphone neuf pour un adolescent entrant au lycée (premier téléphone)",
+  "Acheter un smartphone neuf pour remplacer un modèle vieux de 2 ans encore fonctionnel",
+  "Acheter une tablette neuve pour un enfant dyslexique (outil pédagogique prescrit)",
+  "Acheter une tablette neuve pour regarder des séries dans son lit",
+  "Acheter un écran 27\" neuf pour un graphiste freelance (outil de travail principal)",
+  "Acheter un écran 27\" neuf pour le gaming en 4K",
+  "Laisser un PC fixe (300 W) allumé 24h/24 pendant 8 mois pour du télétravail en zone rurale sans alternative",
+  "Laisser un PC fixe (300 W) allumé 24h/24 pendant 8 mois pour miner de la cryptomonnaie",
+  "Regarder du streaming vidéo 4 h/jour pendant 1 an avec ses enfants (moments en famille)",
+  "Regarder du streaming vidéo 4 h/jour pendant 1 an seul par habitude",
+
+  // --- Énergie & logement : vulnérabilité vs confort ---
+  "Chauffer un logement mal isolé tout l'hiver (personne âgée seule, 20 m²)",
+  "Chauffer un bureau individuel tout l'hiver alors qu'un open space chauffé est disponible",
+  "Climatiser une chambre tout l'été pour un bébé en bas âge",
+  "Climatiser un salon tout l'été pour son confort personnel",
+  "Faire fonctionner un chauffe-eau électrique 1 an pour une famille de 3 personnes",
+  "Prendre des bains chauds quotidiens de 30 min pendant 6 mois (relaxation)",
+
+  // --- Consommation : solidarité vs mode ---
+  "Acheter 15 t-shirts neufs en coton bio pour une association caritative (dons)",
+  "Acheter 15 t-shirts neufs en fast fashion pour renouveler sa garde-robe",
+  "Acheter un vélo électrique neuf pour remplacer une voiture (trajet domicile–travail)",
+  "Acheter un vélo électrique neuf pour des promenades dominicales",
+  "Commander un meuble artisanal européen pour meubler un premier logement social",
+  "Commander un meuble design importé pour refaire sa décoration intérieure",
+  "Acheter un réfrigérateur neuf (classe A) pour remplacer un vieux modèle très énergivore",
+  "Acheter un second réfrigérateur pour stocker les boissons au garage",
+
+  // --- Divers : engagement vs indifférence ---
+  "Faire venir un artisan en camionnette diesel (100 km A/R) pour isoler les combles d'un logement",
+  "Faire venir un artisan en camionnette diesel (100 km A/R) pour installer un jacuzzi",
+  "Imprimer 10 000 pages de supports pédagogiques pour une école sans accès numérique",
+  "Imprimer 10 000 pages de prospectus publicitaires pour un commerce local",
+  "Consommer 2 avocats importés par avion chaque semaine pendant 1 an (seule source de lipides pour régime médical)",
+  "Consommer 2 avocats importés par avion chaque semaine pendant 1 an (tendance alimentaire)"
 ];
 
 const laboProposals = [
-  // Missions & déplacements
-  "Vol A/R pour une conférence à Genève (depuis Paris)",
-  "Vol aller simple pour un séminaire à Toulouse",
-  "Vol A/R pour un jury de thèse à Marseille (depuis Paris)",
-  "Se rendre au labo en voiture (15 km A/R) pendant 8 semaines",
-  "Voiture A/R pour une mission de terrain (500 km)",
-  "Louer un utilitaire pour transporter du matériel (600 km A/R)",
-  "Envoyer un doctorant en voiture à une école d'été (A/R 700 km)",
-  // Calcul HPC (élec. France ~0,057 kg/kWh)
-  "Lancer une simulation CFD sur 10 nœuds pendant 2 semaines",
-  "Entraîner un modèle de deep learning sur 4 GPU pendant 6 semaines",
-  "Faire tourner un serveur de calcul (500 W) en continu pendant 5 mois",
-  "Exécuter un calcul par éléments finis sur 20 cœurs pendant 1 mois",
-  "Stocker 50 To de données expérimentales sur un NAS pendant 3 ans",
-  "Laisser 5 stations de travail allumées 24h/24 pendant 2 mois",
-  "Lancer un calcul Monte-Carlo massif sur un cluster pendant 3 semaines",
-  // Équipement de labo
-  "Acheter un oscilloscope numérique neuf",
-  "Acheter une alimentation stabilisée haute puissance pour le labo",
-  "Acheter une imprimante 3D FDM pour le labo",
-  "Acheter un analyseur de spectre neuf",
-  "Acheter un générateur de signaux neuf",
-  "Acheter 10 capteurs MEMS pour un banc de mesure",
-  "Remplacer un PC fixe du labo par un modèle neuf",
-  // Prototypage
-  "Imprimer 20 kg de PLA sur imprimante 3D",
-  "Faire usiner 50 pièces en aluminium par CNC",
-  "Fabriquer et assembler 20 circuits imprimés (PCB)",
-  "Découper 100 éprouvettes d'essai en acier (traction/fatigue)",
-  "Fabriquer un prototype de boîtier en aluminium fraisé CNC",
-  // Consommables du labo
-  "Consommer 250 L d'azote liquide au labo",
-  "Utiliser 30 L de solvants (acétone, éthanol) au labo en 1 an",
-  "Consommer 10 bouteilles de gaz (argon, azote) pour les expériences",
-  "Couler 750 kg de béton pour des éprouvettes de test",
-  "Utiliser 50 L de résine époxy pour la fabrication de composites",
-  "Consommer les fournitures jetables du labo pendant 1 semestre (gants, tubes, filtres)",
-  // Énergie du bâtiment
-  "Faire fonctionner la salle blanche du labo pendant 1 journée",
-  "Faire fonctionner une hotte aspirante 24h/24 pendant 2 mois",
-  "Chauffer un bureau de labo (25 m²) tout l'hiver (chauffage électrique)",
-  "Climatiser la salle serveur du labo pendant 3 semaines en été",
-  "Faire fonctionner les compresseurs d'air du labo pendant 6 mois",
-  // Terrain & mesures
-  "Déployer un réseau de capteurs sur le terrain (500 km en utilitaire)",
-  "Réaliser une campagne de mesures acoustiques sur 3 sites",
-  "Alimenter un groupe électrogène diesel pour mesures terrain (1 semaine)",
-  "Acheter et utiliser un drone de recherche pendant 1 an",
-  "Expédier 200 kg d'équipement scientifique par fret routier (1 000 km)",
-  // Enseignement
-  "Renouveler le parc de 10 multimètres et oscilloscopes de TP",
-  "Produire 500 polycopiés de cours de 100 pages",
-  "Acheter du petit matériel de TP (composants, câbles, connecteurs) pour 1 an",
-  "Équiper un poste étudiant avec un PC de bureau neuf",
-  // Publications & bureau
-  "Imprimer et expédier 50 posters scientifiques A0 en un an",
-  "Faire tourner un serveur de stockage de publications pendant 2 ans",
-  "Faire tourner un banc d'essai automatisé 24h/24 pendant 3 mois",
-  "Acheter un écran neuf pour un doctorant"
+  // --- Missions : enjeu de carrière vs prestige ---
+  "Vol A/R pour qu'un doctorant présente sa 1ʳᵉ publication orale dans une conférence internationale",
+  "Vol A/R pour qu'un directeur de recherche assiste à une conférence où il n'a pas de présentation",
+  "Vol A/R pour un jury de thèse (membre obligatoire, pas de visio possible)",
+  "Vol A/R pour participer à un comité de pilotage qui pourrait se faire en visio",
+  "Vol A/R pour un post-doc invité à donner un séminaire dans un labo partenaire étranger",
+  "Vol A/R pour un professeur invité à une remise de prix honorifique",
+  "Envoyer un doctorant à une école d'été en voiture (A/R 700 km) — formation essentielle à sa thèse",
+  "Envoyer un permanent à un workshop en voiture (A/R 700 km) — sujet périphérique à ses recherches",
+  "Trajet quotidien en voiture (15 km A/R) pendant 8 semaines — labo inaccessible en transport en commun",
+  "Trajet quotidien en voiture (15 km A/R) pendant 8 semaines — bus disponible mais plus lent (20 min de plus)",
+
+  // --- Calcul HPC : recherche fondamentale vs optimisation ---
+  "Lancer une simulation CFD (10 nœuds, 2 semaines) pour la thèse d'un doctorant — résultats publiables",
+  "Lancer une simulation CFD (10 nœuds, 2 semaines) pour affiner une figure avant soumission d'article",
+  "Entraîner un modèle de deep learning (4 GPU, 6 semaines) pour un projet médical (diagnostic précoce)",
+  "Entraîner un modèle de deep learning (4 GPU, 6 semaines) pour un benchmark comparatif d'article",
+  "Serveur de calcul 500 W en continu pendant 5 mois — seule ressource du labo pour les thésards",
+  "Serveur de calcul 500 W en continu pendant 5 mois — utilisé à 10 % de sa capacité",
+  "Calcul par éléments finis (20 cœurs, 1 mois) pour dimensionner un prototype de sécurité sismique",
+  "Calcul par éléments finis (20 cœurs, 1 mois) pour reproduire des résultats déjà publiés",
+  "Laisser 5 stations de travail allumées 24h/24 pendant 2 mois pour des mesures en continu",
+  "Laisser 5 stations de travail allumées 24h/24 pendant 2 mois par habitude (personne ne les éteint)",
+
+  // --- Équipement : enseignement vs recherche, nécessité vs renouvellement ---
+  "Acheter un oscilloscope neuf pour remplacer un modèle en panne (TP de licence bloqués)",
+  "Acheter un oscilloscope neuf pour un chercheur qui préfère un modèle plus récent",
+  "Acheter une imprimante 3D pour le prototypage rapide de dispositifs médicaux",
+  "Acheter une imprimante 3D pour imprimer des goodies pour les portes ouvertes du labo",
+  "Remplacer un PC fixe du labo pour un doctorant dont la machine plante quotidiennement",
+  "Remplacer un PC fixe du labo pour un permanent qui veut un écran plus grand",
+  "Acheter 10 capteurs MEMS pour un banc de mesure — campagne terrain unique",
+  "Acheter 10 capteurs MEMS pour un banc de mesure — expérience déjà réalisée ailleurs",
+
+  // --- Consommables : expériences essentielles vs confort ---
+  "Consommer 250 L d'azote liquide pour des essais cryogéniques sur un matériau innovant",
+  "Consommer 250 L d'azote liquide pour refaire un TP de démonstration déjà filmé en vidéo",
+  "Couler 750 kg de béton pour des éprouvettes — norme de certification obligatoire",
+  "Couler 750 kg de béton pour des éprouvettes — reproduire une expérience pour vérification interne",
+  "Utiliser 50 L de résine époxy — fabrication de composites pour une collaboration internationale",
+  "Utiliser 50 L de résine époxy — projet de fin d'études d'un stagiaire de Master 1",
+  "Consommer 10 bouteilles de gaz (argon) pour des soudures sur prototype de recherche",
+  "Consommer 10 bouteilles de gaz (argon) pour des essais exploratoires sans protocole défini",
+
+  // --- Énergie bâtiment : sécurité vs habitude ---
+  "Faire fonctionner la salle blanche 1 journée pour fabriquer des micro-capteurs (projet ANR)",
+  "Faire fonctionner la salle blanche 1 journée pour une visite de démonstration à des financeurs",
+  "Hotte aspirante 24h/24, 2 mois — manipulation de solvants toxiques obligatoire",
+  "Hotte aspirante 24h/24, 2 mois — laissée en marche par précaution même hors manipulation",
+  "Climatiser la salle serveur 3 semaines en été — risque de surchauffe des machines",
+  "Climatiser un bureau individuel 3 semaines en été — confort du chercheur",
+
+  // --- Terrain : impact sociétal vs publication ---
+  "Campagne de mesures acoustiques (3 sites, utilitaire) pour cartographier le bruit urbain (santé publique)",
+  "Campagne de mesures acoustiques (3 sites, utilitaire) pour ajouter des données à un article existant",
+  "Groupe électrogène diesel 1 semaine — alimentation de capteurs en zone isolée sans électricité",
+  "Groupe électrogène diesel 1 semaine — tests en extérieur alors qu'un banc intérieur existe",
+  "Expédier 200 kg de matériel par fret (1 000 km) pour installer un observatoire environnemental permanent",
+  "Expédier 200 kg de matériel par fret (1 000 km) pour une expérience ponctuelle de 2 jours",
+
+  // --- Enseignement & publications ---
+  "Produire 500 polycopiés de 100 pages pour une promotion sans accès au numérique",
+  "Produire 500 polycopiés de 100 pages alors que le PDF est disponible en ligne",
+  "Équiper un poste étudiant avec un PC neuf — formation indispensable en simulation",
+  "Équiper un poste étudiant avec un PC neuf — le PC actuel est lent mais fonctionnel"
 ];
 
 // =============================================
