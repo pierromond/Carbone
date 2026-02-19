@@ -552,7 +552,7 @@
   <div class="header-label" id="header-label">Éthique climatique · Expérience participative</div>
   <h1>100 kg de<br><em>CO₂</em> à choisir</h1>
   <p class="subtitle" id="subtitle">Chaque geste, chaque voyage, chaque usage numérique a un coût climatique. Ces dilemmes vous invitent à peser vos priorités.</p>
-  <div class="co2-badge">≈ 100 kg CO₂ équivalent par option</div>
+  <div class="co2-badge">≈ 50 à 500 kg CO₂ équivalent par option</div>
 </header>
 
 <div class="arena">
@@ -563,7 +563,7 @@
       <div class="card-letter">A</div>
       <div class="card-tag">Option A</div>
       <div class="card-text" id="text-a">…</div>
-      <div class="card-co2">🌿 <span>~100 kg CO₂</span></div>
+      <div class="card-co2">🌿 <span id="co2-a">~100 kg CO₂</span></div>
     </div>
     <div class="vs-divider">
       <div class="vs-line"></div>
@@ -574,7 +574,7 @@
       <div class="card-letter">B</div>
       <div class="card-tag">Option B</div>
       <div class="card-text" id="text-b">…</div>
-      <div class="card-co2">🌿 <span>~100 kg CO₂</span></div>
+      <div class="card-co2">🌿 <span id="co2-b">~100 kg CO₂</span></div>
     </div>
   </div>
 
@@ -603,7 +603,7 @@
 
 <footer>
   Les émissions sont des estimations moyennes. Sources : ADEME, Our World in Data, IEA.<br>
-  <em>100 kg de CO₂</em> ≈ 1/100e de l'empreinte annuelle d'un Français moyen.
+  <em>50 – 500 kg de CO₂</em> ≈ dilemmes calibrés ADEME, empreinte annuelle FR ≈ 10 t.
   <div class="db-status" id="db-status">
     <div class="live-dot" id="live-dot"></div>
     <span id="db-status-text">Connexion à la base de données…</span>
@@ -645,136 +645,142 @@ const db = getFirestore(app);
 // =============================================
 const standardProposals = [
   // --- Transport : contexte éthique fort ---
-  "Prendre l'avion pour assister aux obsèques d'un proche à Marseille (A/R depuis Paris)",
-  "Prendre l'avion pour un week-end de loisirs à Barcelone (A/R depuis Paris)",
-  "Conduire 500 km pour rendre visite à un parent hospitalisé",
-  "Conduire 500 km pour un week-end gastronomique entre amis",
-  "Prendre l'avion pour accompagner son enfant à un concours national (A/R)",
-  "Prendre l'avion pour un enterrement de vie de célibataire à Porto (A/R)",
-  "Faire un A/R en voiture pour un entretien d'embauche décisif (600 km)",
-  "Faire un A/R en voiture pour un concert de son artiste préféré (600 km)",
-  "Se rendre au travail en voiture (20 km A/R) pendant 5 semaines, seul emploi accessible",
-  "Se rendre à la salle de sport en voiture (20 km A/R) pendant 5 semaines",
-  "Prendre le bus diesel chaque jour (10 km A/R) pendant 3 mois pour aller à l'école de ses enfants",
-  "Prendre le bus diesel chaque jour (10 km A/R) pendant 3 mois pour éviter le vélo en hiver",
+  {text: "Prendre l'avion A/R Paris → Marseille pour assister aux obsèques d'un proche", co2: 150},
+  {text: "Prendre l'avion A/R Paris → Barcelone pour un week-end de loisirs", co2: 300},
+  {text: "Conduire 500 km pour rendre visite à un parent hospitalisé", co2: 95},
+  {text: "Conduire 500 km pour un week-end gastronomique entre amis", co2: 95},
+  {text: "Prendre l'avion A/R pour accompagner son enfant à un concours national", co2: 150},
+  {text: "Prendre l'avion A/R pour un enterrement de vie de célibataire à Porto", co2: 400},
+  {text: "Faire un A/R en voiture pour un entretien d'embauche décisif (600 km)", co2: 115},
+  {text: "Faire un A/R en voiture pour un concert de son artiste préféré (600 km)", co2: 115},
+  {text: "Se rendre au travail en voiture (20 km A/R) pendant 5 semaines — seul emploi accessible", co2: 95},
+  {text: "Se rendre à la salle de sport en voiture (20 km A/R) pendant 5 semaines", co2: 95},
+  {text: "Vol A/R Paris → New York pour les funérailles d'un ami d'enfance", co2: 500},
+  {text: "Vol A/R Paris → New York pour un shopping week-end (Black Friday)", co2: 500},
 
   // --- Alimentation : dilemmes culturels, santé, plaisir ---
-  "Manger de la viande rouge (200 g) chaque soir pendant 3 semaines, prescrit par un médecin (anémie sévère)",
-  "Manger de la viande rouge (200 g) chaque soir pendant 3 semaines, par habitude culinaire",
-  "Consommer 5 kg de crevettes lors d'un repas de fête de famille traditionnel",
-  "Consommer 5 kg de crevettes en livraison à domicile pour des apéros personnels",
-  "Manger du fromage local (comté) 100 g/jour pendant 5 mois, soutien aux producteurs de montagne",
-  "Manger du fromage importé 100 g/jour pendant 5 mois, commandé en ligne",
-  "Offrir un repas de bœuf français pour les 80 ans de sa grand-mère (20 convives)",
-  "Commander 20 burgers en livraison express pour une soirée foot entre copains",
-  "Boire du café équitable 1 tasse/jour pendant 1 an (soutien coopérative)",
-  "Boire des capsules aluminium 1 tasse/jour pendant 1 an (praticité)",
+  {text: "Manger de la viande rouge (200 g) chaque soir pendant 3 semaines, prescrit par un médecin (anémie sévère)", co2: 115},
+  {text: "Manger de la viande rouge (200 g) chaque soir pendant 3 semaines, par habitude culinaire", co2: 115},
+  {text: "Consommer 5 kg de crevettes lors d'un repas de fête de famille traditionnel", co2: 100},
+  {text: "Consommer 5 kg de crevettes en livraison à domicile pour des apéros personnels", co2: 100},
+  {text: "Manger du fromage local (comté) 100 g/jour pendant 5 mois — soutien aux producteurs de montagne", co2: 95},
+  {text: "Manger du fromage importé 100 g/jour pendant 5 mois — commandé en ligne", co2: 95},
+  {text: "Offrir un repas de bœuf français pour les 80 ans de sa grand-mère (20 convives, 10 kg)", co2: 280},
+  {text: "Commander 20 burgers en livraison express pour une soirée foot entre copains", co2: 280},
+  {text: "Boire du café équitable 1 tasse/jour pendant 1 an (soutien coopérative)", co2: 60},
+  {text: "Boire des capsules alu 1 tasse/jour pendant 1 an (praticité)", co2: 60},
+  {text: "Nourrir quotidiennement une famille de 4 personnes en bio local pendant 1 mois", co2: 200},
+  {text: "Commander seul en livraison express chaque soir pendant 1 mois", co2: 200},
 
   // --- Numérique : nécessité vs confort ---
-  "Acheter un smartphone neuf pour un adolescent entrant au lycée (premier téléphone)",
-  "Acheter un smartphone neuf pour remplacer un modèle vieux de 2 ans encore fonctionnel",
-  "Acheter une tablette neuve pour un enfant dyslexique (outil pédagogique prescrit)",
-  "Acheter une tablette neuve pour regarder des séries dans son lit",
-  "Acheter un écran 27\" neuf pour un graphiste freelance (outil de travail principal)",
-  "Acheter un écran 27\" neuf pour le gaming en 4K",
-  "Laisser un PC fixe (300 W) allumé 24h/24 pendant 8 mois pour du télétravail en zone rurale sans alternative",
-  "Laisser un PC fixe (300 W) allumé 24h/24 pendant 8 mois pour miner de la cryptomonnaie",
-  "Regarder du streaming vidéo 4 h/jour pendant 1 an avec ses enfants (moments en famille)",
-  "Regarder du streaming vidéo 4 h/jour pendant 1 an seul par habitude",
+  {text: "Acheter un smartphone neuf pour un adolescent entrant au lycée (premier téléphone)", co2: 80},
+  {text: "Acheter un smartphone neuf pour remplacer un modèle vieux de 2 ans encore fonctionnel", co2: 80},
+  {text: "Acheter une tablette neuve pour un enfant dyslexique (outil pédagogique prescrit)", co2: 87},
+  {text: "Acheter une tablette neuve pour regarder des séries dans son lit", co2: 87},
+  {text: "Acheter un PC fixe pro pour un travailleur indépendant (outil principal)", co2: 260},
+  {text: "Acheter un PC gamer haut de gamme pour jouer en 4K", co2: 350},
+  {text: "Laisser un PC fixe (300 W) allumé 24h/24 pendant 8 mois — télétravail en zone rurale sans alternative", co2: 100},
+  {text: "Laisser un PC fixe (300 W) allumé 24h/24 pendant 8 mois — miner de la cryptomonnaie", co2: 100},
+  {text: "Acheter un écran 27\" neuf pour un graphiste freelance (outil de travail)", co2: 93},
+  {text: "Acheter un écran 27\" neuf juste pour le gaming", co2: 93},
 
   // --- Énergie & logement : vulnérabilité vs confort ---
-  "Chauffer un logement mal isolé tout l'hiver (personne âgée seule, 20 m²)",
-  "Chauffer un bureau individuel tout l'hiver alors qu'un open space chauffé est disponible",
-  "Climatiser une chambre tout l'été pour un bébé en bas âge",
-  "Climatiser un salon tout l'été pour son confort personnel",
-  "Faire fonctionner un chauffe-eau électrique 1 an pour une famille de 3 personnes",
-  "Prendre des bains chauds quotidiens de 30 min pendant 6 mois (relaxation)",
+  {text: "Chauffer un logement mal isolé tout l'hiver pour une personne âgée seule (20 m²)", co2: 100},
+  {text: "Chauffer un bureau individuel tout l'hiver alors qu'un open space chauffé est disponible", co2: 100},
+  {text: "Climatiser une chambre tout l'été pour un bébé en bas âge", co2: 75},
+  {text: "Climatiser un salon tout l'été pour son confort personnel", co2: 150},
+  {text: "Faire fonctionner un chauffe-eau électrique 1 an pour une famille de 3 personnes", co2: 100},
+  {text: "Prendre des bains chauds quotidiens de 30 min pendant 6 mois (relaxation)", co2: 100},
+  {text: "Isoler les combles d'un logement social (artisan A/R 100 km + matériaux)", co2: 75},
+  {text: "Faire installer un jacuzzi extérieur (artisan A/R 100 km + matériaux)", co2: 75},
 
   // --- Consommation : solidarité vs mode ---
-  "Acheter 15 t-shirts neufs en coton bio pour une association caritative (dons)",
-  "Acheter 15 t-shirts neufs en fast fashion pour renouveler sa garde-robe",
-  "Acheter un vélo électrique neuf pour remplacer une voiture (trajet domicile–travail)",
-  "Acheter un vélo électrique neuf pour des promenades dominicales",
-  "Commander un meuble artisanal européen pour meubler un premier logement social",
-  "Commander un meuble design importé pour refaire sa décoration intérieure",
-  "Acheter un réfrigérateur neuf (classe A) pour remplacer un vieux modèle très énergivore",
-  "Acheter un second réfrigérateur pour stocker les boissons au garage",
+  {text: "Acheter 15 t-shirts neufs en coton bio pour une association caritative (dons)", co2: 100},
+  {text: "Acheter 15 t-shirts neufs en fast fashion pour renouveler sa garde-robe", co2: 100},
+  {text: "Acheter un vélo électrique neuf pour remplacer une voiture (trajet domicile–travail)", co2: 100},
+  {text: "Acheter un vélo électrique neuf pour des promenades dominicales", co2: 100},
+  {text: "Acheter un réfrigérateur neuf (classe A) pour remplacer un vieux modèle très énergivore", co2: 150},
+  {text: "Acheter un second réfrigérateur pour stocker les boissons au garage", co2: 150},
+  {text: "Acheter un canapé neuf pour meubler un premier logement social", co2: 200},
+  {text: "Acheter un canapé design importé pour refaire sa décoration intérieure", co2: 300},
 
   // --- Divers : engagement vs indifférence ---
-  "Faire venir un artisan en camionnette diesel (100 km A/R) pour isoler les combles d'un logement",
-  "Faire venir un artisan en camionnette diesel (100 km A/R) pour installer un jacuzzi",
-  "Imprimer 10 000 pages de supports pédagogiques pour une école sans accès numérique",
-  "Imprimer 10 000 pages de prospectus publicitaires pour un commerce local",
-  "Consommer 2 avocats importés par avion chaque semaine pendant 1 an (seule source de lipides pour régime médical)",
-  "Consommer 2 avocats importés par avion chaque semaine pendant 1 an (tendance alimentaire)"
+  {text: "Imprimer 10 000 pages de supports pédagogiques pour une école sans accès numérique", co2: 50},
+  {text: "Imprimer 10 000 pages de prospectus publicitaires pour un commerce local", co2: 50},
+  {text: "Consommer 2 avocats importés par avion/semaine pendant 1 an — seule source de lipides (régime médical)", co2: 80},
+  {text: "Consommer 2 avocats importés par avion/semaine pendant 1 an — tendance alimentaire", co2: 80},
+  {text: "A/R en voiture pour emmener un enfant handicapé à un centre spécialisé (400 km)", co2: 75},
+  {text: "A/R en voiture pour assister à l'ouverture d'un centre commercial (400 km)", co2: 75}
 ];
 
 const laboProposals = [
   // --- Missions : enjeu de carrière vs prestige ---
-  "Vol A/R pour qu'un doctorant présente sa 1ʳᵉ publication orale dans une conférence internationale",
-  "Vol A/R pour qu'un directeur de recherche assiste à une conférence où il n'a pas de présentation",
-  "Vol A/R pour un jury de thèse (membre obligatoire, pas de visio possible)",
-  "Vol A/R pour participer à un comité de pilotage qui pourrait se faire en visio",
-  "Vol A/R pour un post-doc invité à donner un séminaire dans un labo partenaire étranger",
-  "Vol A/R pour un professeur invité à une remise de prix honorifique",
-  "Envoyer un doctorant à une école d'été en voiture (A/R 700 km) — formation essentielle à sa thèse",
-  "Envoyer un permanent à un workshop en voiture (A/R 700 km) — sujet périphérique à ses recherches",
-  "Trajet quotidien en voiture (15 km A/R) pendant 8 semaines — labo inaccessible en transport en commun",
-  "Trajet quotidien en voiture (15 km A/R) pendant 8 semaines — bus disponible mais plus lent (20 min de plus)",
+  {text: "Vol A/R pour qu'un doctorant présente sa 1ʳᵉ publication orale en conférence internationale", co2: 150},
+  {text: "Vol A/R pour qu'un directeur de recherche assiste à une conférence sans présentation", co2: 150},
+  {text: "Vol A/R pour un jury de thèse (membre obligatoire, visio impossible)", co2: 150},
+  {text: "Vol A/R pour un comité de pilotage qui pourrait se faire en visio", co2: 150},
+  {text: "Vol A/R intercontinental pour qu'un post-doc donne un séminaire dans un labo partenaire", co2: 500},
+  {text: "Vol A/R intercontinental pour un professeur invité à une remise de prix honorifique", co2: 500},
+  {text: "Envoyer un doctorant à une école d'été en voiture (A/R 700 km) — formation essentielle à sa thèse", co2: 135},
+  {text: "Envoyer un permanent à un workshop en voiture (A/R 700 km) — sujet périphérique", co2: 135},
+  {text: "Trajet quotidien en voiture (15 km A/R) pendant 8 semaines — labo inaccessible en TC", co2: 70},
+  {text: "Trajet quotidien en voiture (15 km A/R) pendant 8 semaines — bus disponible (+20 min)", co2: 70},
 
   // --- Calcul HPC : recherche fondamentale vs optimisation ---
-  "Lancer une simulation CFD (10 nœuds, 2 semaines) pour la thèse d'un doctorant — résultats publiables",
-  "Lancer une simulation CFD (10 nœuds, 2 semaines) pour affiner une figure avant soumission d'article",
-  "Entraîner un modèle de deep learning (4 GPU, 6 semaines) pour un projet médical (diagnostic précoce)",
-  "Entraîner un modèle de deep learning (4 GPU, 6 semaines) pour un benchmark comparatif d'article",
-  "Serveur de calcul 500 W en continu pendant 5 mois — seule ressource du labo pour les thésards",
-  "Serveur de calcul 500 W en continu pendant 5 mois — utilisé à 10 % de sa capacité",
-  "Calcul par éléments finis (20 cœurs, 1 mois) pour dimensionner un prototype de sécurité sismique",
-  "Calcul par éléments finis (20 cœurs, 1 mois) pour reproduire des résultats déjà publiés",
-  "Laisser 5 stations de travail allumées 24h/24 pendant 2 mois pour des mesures en continu",
-  "Laisser 5 stations de travail allumées 24h/24 pendant 2 mois par habitude (personne ne les éteint)",
+  {text: "Simulation CFD (10 nœuds, 2 semaines) pour la thèse d'un doctorant — résultats publiables", co2: 100},
+  {text: "Simulation CFD (10 nœuds, 2 semaines) pour affiner une figure avant soumission", co2: 100},
+  {text: "Entraîner un modèle de deep learning (4 GPU, 6 semaines) pour un projet médical", co2: 200},
+  {text: "Entraîner un modèle de deep learning (4 GPU, 6 semaines) pour un benchmark d'article", co2: 200},
+  {text: "Serveur de calcul 500 W en continu 5 mois — seule ressource pour les thésards", co2: 100},
+  {text: "Serveur de calcul 500 W en continu 5 mois — utilisé à 10 % de sa capacité", co2: 100},
+  {text: "Calcul éléments finis (20 cœurs, 1 mois) pour dimensionner un prototype sismique", co2: 80},
+  {text: "Calcul éléments finis (20 cœurs, 1 mois) pour reproduire des résultats déjà publiés", co2: 80},
+  {text: "Laisser 5 stations de travail 24h/24, 2 mois — mesures en continu nécessaires", co2: 120},
+  {text: "Laisser 5 stations de travail 24h/24, 2 mois — par habitude, personne ne les éteint", co2: 120},
+  {text: "Calcul Monte-Carlo massif sur cluster pendant 1 mois — thèse en physique nucléaire", co2: 300},
+  {text: "Calcul Monte-Carlo massif sur cluster pendant 1 mois — exploration sans objectif précis", co2: 300},
 
   // --- Équipement : enseignement vs recherche, nécessité vs renouvellement ---
-  "Acheter un oscilloscope neuf pour remplacer un modèle en panne (TP de licence bloqués)",
-  "Acheter un oscilloscope neuf pour un chercheur qui préfère un modèle plus récent",
-  "Acheter une imprimante 3D pour le prototypage rapide de dispositifs médicaux",
-  "Acheter une imprimante 3D pour imprimer des goodies pour les portes ouvertes du labo",
-  "Remplacer un PC fixe du labo pour un doctorant dont la machine plante quotidiennement",
-  "Remplacer un PC fixe du labo pour un permanent qui veut un écran plus grand",
-  "Acheter 10 capteurs MEMS pour un banc de mesure — campagne terrain unique",
-  "Acheter 10 capteurs MEMS pour un banc de mesure — expérience déjà réalisée ailleurs",
+  {text: "Acheter un oscilloscope neuf — modèle en panne, TP de licence bloqués", co2: 100},
+  {text: "Acheter un oscilloscope neuf — un chercheur préfère un modèle plus récent", co2: 100},
+  {text: "Acheter une imprimante 3D pour prototyper des dispositifs médicaux", co2: 80},
+  {text: "Acheter une imprimante 3D pour imprimer des goodies pour les portes ouvertes", co2: 80},
+  {text: "Remplacer le PC fixe d'un doctorant dont la machine plante quotidiennement", co2: 260},
+  {text: "Remplacer le PC fixe d'un permanent qui veut un écran plus grand", co2: 260},
+  {text: "Acheter 10 capteurs MEMS pour un banc de mesure — campagne terrain unique", co2: 50},
+  {text: "Acheter 10 capteurs MEMS — expérience déjà réalisée dans un autre labo", co2: 50},
 
   // --- Consommables : expériences essentielles vs confort ---
-  "Consommer 250 L d'azote liquide pour des essais cryogéniques sur un matériau innovant",
-  "Consommer 250 L d'azote liquide pour refaire un TP de démonstration déjà filmé en vidéo",
-  "Couler 750 kg de béton pour des éprouvettes — norme de certification obligatoire",
-  "Couler 750 kg de béton pour des éprouvettes — reproduire une expérience pour vérification interne",
-  "Utiliser 50 L de résine époxy — fabrication de composites pour une collaboration internationale",
-  "Utiliser 50 L de résine époxy — projet de fin d'études d'un stagiaire de Master 1",
-  "Consommer 10 bouteilles de gaz (argon) pour des soudures sur prototype de recherche",
-  "Consommer 10 bouteilles de gaz (argon) pour des essais exploratoires sans protocole défini",
+  {text: "Consommer 250 L d'azote liquide — essais cryogéniques sur un matériau innovant", co2: 100},
+  {text: "Consommer 250 L d'azote liquide — refaire un TP déjà filmé en vidéo", co2: 100},
+  {text: "Couler 750 kg de béton pour éprouvettes — norme de certification obligatoire", co2: 100},
+  {text: "Couler 750 kg de béton pour éprouvettes — vérification interne non imposée", co2: 100},
+  {text: "Utiliser 50 L de résine époxy — composites pour collaboration internationale", co2: 100},
+  {text: "Utiliser 50 L de résine époxy — projet de fin d'études d'un stagiaire M1", co2: 100},
+  {text: "10 bouteilles de gaz argon — soudures sur prototype de recherche", co2: 70},
+  {text: "10 bouteilles de gaz argon — essais exploratoires sans protocole défini", co2: 70},
 
   // --- Énergie bâtiment : sécurité vs habitude ---
-  "Faire fonctionner la salle blanche 1 journée pour fabriquer des micro-capteurs (projet ANR)",
-  "Faire fonctionner la salle blanche 1 journée pour une visite de démonstration à des financeurs",
-  "Hotte aspirante 24h/24, 2 mois — manipulation de solvants toxiques obligatoire",
-  "Hotte aspirante 24h/24, 2 mois — laissée en marche par précaution même hors manipulation",
-  "Climatiser la salle serveur 3 semaines en été — risque de surchauffe des machines",
-  "Climatiser un bureau individuel 3 semaines en été — confort du chercheur",
+  {text: "Faire fonctionner la salle blanche 1 journée — fabriquer des micro-capteurs (projet ANR)", co2: 100},
+  {text: "Faire fonctionner la salle blanche 1 journée — visite de démonstration pour financeurs", co2: 100},
+  {text: "Hotte aspirante 24h/24, 2 mois — manipulation de solvants toxiques obligatoire", co2: 80},
+  {text: "Hotte aspirante 24h/24, 2 mois — laissée en marche par précaution hors manipulation", co2: 80},
+  {text: "Climatiser la salle serveur 3 semaines en été — risque de surchauffe des machines", co2: 60},
+  {text: "Climatiser un bureau individuel 3 semaines en été — confort du chercheur", co2: 60},
 
   // --- Terrain : impact sociétal vs publication ---
-  "Campagne de mesures acoustiques (3 sites, utilitaire) pour cartographier le bruit urbain (santé publique)",
-  "Campagne de mesures acoustiques (3 sites, utilitaire) pour ajouter des données à un article existant",
-  "Groupe électrogène diesel 1 semaine — alimentation de capteurs en zone isolée sans électricité",
-  "Groupe électrogène diesel 1 semaine — tests en extérieur alors qu'un banc intérieur existe",
-  "Expédier 200 kg de matériel par fret (1 000 km) pour installer un observatoire environnemental permanent",
-  "Expédier 200 kg de matériel par fret (1 000 km) pour une expérience ponctuelle de 2 jours",
+  {text: "Campagne de mesures acoustiques (3 sites) — cartographier le bruit urbain (santé publique)", co2: 120},
+  {text: "Campagne de mesures acoustiques (3 sites) — ajouter des données à un article existant", co2: 120},
+  {text: "Groupe électrogène diesel 1 semaine — capteurs en zone isolée sans électricité", co2: 100},
+  {text: "Groupe électrogène diesel 1 semaine — tests en extérieur alors qu'un banc intérieur existe", co2: 100},
+  {text: "Expédier 200 kg de matériel par fret (1 000 km) — observatoire environnemental permanent", co2: 80},
+  {text: "Expédier 200 kg de matériel par fret (1 000 km) — expérience ponctuelle de 2 jours", co2: 80},
 
   // --- Enseignement & publications ---
-  "Produire 500 polycopiés de 100 pages pour une promotion sans accès au numérique",
-  "Produire 500 polycopiés de 100 pages alors que le PDF est disponible en ligne",
-  "Équiper un poste étudiant avec un PC neuf — formation indispensable en simulation",
-  "Équiper un poste étudiant avec un PC neuf — le PC actuel est lent mais fonctionnel"
+  {text: "500 polycopiés de 100 pages — promotion sans accès au numérique", co2: 50},
+  {text: "500 polycopiés de 100 pages — le PDF est disponible en ligne", co2: 50},
+  {text: "Équiper un poste étudiant PC neuf — formation indispensable en simulation", co2: 260},
+  {text: "Équiper un poste étudiant PC neuf — le PC actuel est lent mais fonctionnel", co2: 260}
 ];
 
 // =============================================
@@ -797,7 +803,7 @@ const MODES = {
 
 let currentAppMode = 'standard';
 let proposals = MODES[currentAppMode].proposals;
-let scores = proposals.map((text, i) => ({ id: i, text, wins: 0, losses: 0, elo: 1200 }));
+let scores = proposals.map((p, i) => ({ id: i, text: p.text, co2: p.co2, wins: 0, losses: 0, elo: 1200 }));
 let totalVotes = 0;
 let currentA = -1;
 let currentB = -1;
@@ -869,7 +875,7 @@ function switchMode(mode) {
   if (mode === currentAppMode) return;
   currentAppMode = mode;
   proposals = MODES[mode].proposals;
-  scores = proposals.map((text, i) => ({ id: i, text, wins: 0, losses: 0, elo: 1200 }));
+  scores = proposals.map((p, i) => ({ id: i, text: p.text, co2: p.co2, wins: 0, losses: 0, elo: 1200 }));
   totalVotes = 0;
 
   // Update UI
@@ -903,8 +909,10 @@ function updatePair() {
   const [a, b] = getRandomPair();
   currentA = a;
   currentB = b;
-  document.getElementById('text-a').textContent = proposals[a];
-  document.getElementById('text-b').textContent = proposals[b];
+  document.getElementById('text-a').textContent = proposals[a].text;
+  document.getElementById('text-b').textContent = proposals[b].text;
+  document.getElementById('co2-a').textContent = `~${proposals[a].co2} kg CO₂`;
+  document.getElementById('co2-b').textContent = `~${proposals[b].co2} kg CO₂`;
   document.getElementById('pair-label').textContent =
     `Duel #${totalVotes + 1} — Lequel préféreriez-vous émettre ?`;
   const cardA = document.getElementById('card-a');
@@ -994,7 +1002,7 @@ function renderLeaderboard() {
 
     return `<div class="rank-item ${isTop3 ? 'top-3' : ''} ${isLast ? 'last' : ''}">
       <div class="rank-num">${medal}</div>
-      <div class="rank-text">${s.text.substring(0, 90)}${s.text.length > 90 ? '…' : ''}</div>
+      <div class="rank-text">${s.text.substring(0, 85)}${s.text.length > 85 ? '…' : ''} <span style="color:var(--muted);font-size:0.75rem">(${s.co2} kg)</span></div>
       <div class="rank-score">ELO ${Math.round(s.elo)} · ${winRate}% (${total}v)</div>
       <div class="rank-bar-wrap">
         <div class="rank-bar" style="width:${barW}%"></div>
