@@ -818,7 +818,7 @@ let voted = false;
 let unsubscribe = null; // Firestore listener cleanup
 
 // --- Database status indicator ---
-function setDbStatus(online) {
+function setDbStatus(online, detail) {
   const dot = document.getElementById('live-dot');
   const txt = document.getElementById('db-status-text');
   if (online) {
@@ -826,7 +826,7 @@ function setDbStatus(online) {
     txt.textContent = `Connecté · ${currentAppMode === 'labo' ? 'labo recherche' : 'standard'} · votes en direct`;
   } else {
     dot.classList.add('offline');
-    txt.textContent = 'Hors ligne · reconnexion en cours…';
+    txt.textContent = detail || 'Hors ligne · reconnexion en cours…';
   }
 }
 
@@ -871,7 +871,11 @@ function listenForUpdates() {
     },
     (error) => {
       console.error('Firestore listen error:', error);
-      setDbStatus(false);
+      if (error.code === 'permission-denied') {
+        setDbStatus(false, '⚠️ Règles Firestore expirées — mettez à jour les règles dans la console Firebase');
+      } else {
+        setDbStatus(false, 'Hors ligne · reconnexion en cours…');
+      }
     }
   );
 }
@@ -952,7 +956,11 @@ async function vote(choice) {
     await batch.commit();
   } catch (e) {
     console.error('Vote write error:', e);
-    setDbStatus(false);
+    if (e.code === 'permission-denied') {
+      setDbStatus(false, '⚠️ Règles Firestore expirées — mettez à jour les règles dans la console Firebase');
+    } else {
+      setDbStatus(false);
+    }
     scores[winnerIdx].wins++;
     scores[loserIdx].losses++;
     totalVotes++;
