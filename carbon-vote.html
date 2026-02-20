@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⚖️ Dilemmes Carbone — 100 kg à Choisir</title>
+<title>⚖️ Dilemmes Carbone — Une Tonne à Choisir</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&family=Lora:ital@0;1&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -471,88 +471,15 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0.3; }
   }
-
-  /* Mode switcher */
-  .mode-switcher {
-    position: fixed;
-    top: 1rem;
-    left: 1rem;
-    z-index: 999;
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-  }
-
-  .mode-btn {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 0.4rem 0.75rem;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--muted);
-    border-radius: 3px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    white-space: nowrap;
-    text-align: left;
-  }
-
-  .mode-btn:hover {
-    border-color: var(--muted);
-    color: var(--text);
-  }
-
-  .mode-btn.active {
-    background: var(--glow);
-    border-color: var(--accent);
-    color: var(--accent);
-    box-shadow: 0 0 12px rgba(200, 168, 75, 0.15);
-  }
-
-  .mode-btn .mode-icon {
-    margin-right: 0.3rem;
-  }
-
-  .mode-indicator {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.55rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-    padding: 0 0.2rem;
-  }
-
-  @media (max-width: 640px) {
-    .mode-switcher {
-      position: relative;
-      top: auto;
-      left: auto;
-      flex-direction: row;
-      justify-content: center;
-      padding: 0.75rem 1rem 0;
-    }
-  }
 </style>
 </head>
 <body>
 
-<div class="mode-switcher" id="mode-switcher">
-  <div class="mode-indicator">mode</div>
-  <button class="mode-btn active" id="btn-standard" onclick="switchMode('standard')">
-    <span class="mode-icon">🎯</span>Standard
-  </button>
-  <button class="mode-btn" id="btn-labo" onclick="switchMode('labo')">
-    <span class="mode-icon">🔬</span>Labo recherche
-  </button>
-</div>
-
 <header>
-  <div class="header-label" id="header-label">Éthique climatique · Expérience participative</div>
-  <h1>100 kg de<br><em>CO₂</em> à choisir</h1>
-  <p class="subtitle" id="subtitle">Chaque geste, chaque voyage, chaque usage numérique a un coût climatique. Ces dilemmes vous invitent à peser vos priorités.</p>
-  <div class="co2-badge">≈ 50 à 500 kg CO₂ équivalent par option</div>
+  <div class="header-label">Éthique climatique · Expérience participative</div>
+  <h1>Une tonne de<br><em>CO₂</em> à choisir</h1>
+  <p class="subtitle">Chaque geste, chaque voyage, chaque usage numérique a un coût climatique. Ces dilemmes vous invitent à peser vos priorités.</p>
+  <div class="co2-badge">≈ 1 tonne CO₂ équivalent par option</div>
 </header>
 
 <div class="arena">
@@ -563,7 +490,7 @@
       <div class="card-letter">A</div>
       <div class="card-tag">Option A</div>
       <div class="card-text" id="text-a">…</div>
-      <div class="card-co2">🌿 <span id="co2-a">~100 kg CO₂</span></div>
+      <div class="card-co2">🌿 <span>~1 t CO₂</span></div>
     </div>
     <div class="vs-divider">
       <div class="vs-line"></div>
@@ -574,7 +501,7 @@
       <div class="card-letter">B</div>
       <div class="card-tag">Option B</div>
       <div class="card-text" id="text-b">…</div>
-      <div class="card-co2">🌿 <span id="co2-b">~100 kg CO₂</span></div>
+      <div class="card-co2">🌿 <span>~1 t CO₂</span></div>
     </div>
   </div>
 
@@ -603,7 +530,7 @@
 
 <footer>
   Les émissions sont des estimations moyennes. Sources : ADEME, Our World in Data, IEA.<br>
-  <em>50 – 500 kg de CO₂</em> ≈ dilemmes calibrés ADEME, empreinte annuelle FR ≈ 10 t.
+  <em>Une tonne de CO₂</em> = l'empreinte annuelle d'un habitant d'Inde en 2023.
   <div class="db-status" id="db-status">
     <div class="live-dot" id="live-dot"></div>
     <span id="db-status-text">Connexion à la base de données…</span>
@@ -613,8 +540,6 @@
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
 import { getFirestore, collection, doc, setDoc, increment, onSnapshot, writeBatch } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
-import { standardProposals } from './proposals-standard.js';
-import { laboProposals } from './proposals-labo.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBjBb9ta2_fkgmc40mbQZlMiWjuBdE5rM4",
@@ -627,123 +552,106 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const COLL = 'carbone_votes';
 
-// =============================================
-// Mode management: standard vs labo
-// =============================================
-const MODES = {
-  standard: {
-    coll: 'carbone_standard',
-    proposals: standardProposals,
-    label: 'Éthique climatique · Expérience participative',
-    subtitle: 'Chaque geste, chaque voyage, chaque usage numérique a un coût climatique. Ces dilemmes vous invitent à peser vos priorités.'
-  },
-  labo: {
-    coll: 'carbone_labo',
-    proposals: laboProposals,
-    label: 'Labo de recherche · Protocole scientifique',
-    subtitle: 'Version recherche : vos réponses alimentent une étude sur la perception des arbitrages carbone. Chaque vote compte pour la science.'
-  }
-};
+const proposals = [
+  "Prendre l'avion seul Paris → New York (aller simple, classe éco)",
+  "Partir 2 semaines en vacances à Lisbonne en avion depuis Paris (A/R)",
+  "Faire un week-end à Rome en avion (A/R) avec hôtel",
+  "Conduire ma voiture diesel de Paris à Nice et retour (environ 1 400 km A/R)",
+  "Partir une semaine au ski en voiture avec deux amis, remontées mécaniques incluses",
+  "Manger un steak de bœuf par semaine pendant toute une année",
+  "Manger de la viande rouge (agneau, bœuf) à chaque repas du soir pendant 2 mois",
+  "Acheter un iPhone dernier modèle neuf",
+  "Remplacer mon ordinateur portable par un modèle neuf cette année",
+  "Chauffer mon appartement au fioul pendant les 2 mois les plus froids de l'hiver",
+  "Laisser mon chauffage électrique allumé en continu dans une pièce pendant tout l'hiver",
+  "Prendre ma voiture pour aller au travail tous les jours pendant 1 an (trajet 20 km A/R)",
+  "Utiliser ChatGPT ou Claude plusieurs heures par jour pendant toute une année",
+  "Regarder du streaming vidéo (Netflix, YouTube) en 4K chaque soir pendant 1 an",
+  "Acheter 10 vêtements neufs par mois sur des sites de fast fashion pendant 1 an",
+  "Faire livrer un colis en express depuis la Chine chaque semaine pendant 6 mois",
+  "Acheter un canapé en cuir neuf fabriqué en Asie et livré à domicile",
+  "Faire une croisière de 10 jours en Méditerranée",
+  "Renouveler toute ma garde-robe (30 pièces) en vêtements neufs synthétiques",
+  "Climatiser mon appartement tout l'été (juin–septembre) en France",
+  "Partir 3 semaines en road-trip aux États-Unis avec voiture de location",
+  "Acheter une paire de chaussures en cuir importée chaque mois pendant 1 an",
+  "Faire construire et livrer un meuble sur mesure depuis l'Asie du Sud-Est",
+  "Prendre l'avion pour des déplacements professionnels 4 fois dans l'année (courts courriers)",
+  "Consommer de l'alcool fort (whisky, cognac) régulièrement : 2 bouteilles/mois pendant 1 an",
+  "Manger du fromage à pâte dure (parmesan, comté) tous les jours pendant 1 an",
+  "Acheter un écran TV 75 pouces neuf et le regarder 5h par jour pendant 1 an",
+  "Faire rénover ma salle de bain (carrelage, baignoire, plomberie) avec artisans",
+  "Aller à la salle de sport en voiture (5 km A/R) 4 fois par semaine pendant 1 an",
+  "Prendre une douche de 15 minutes chaque matin avec un chauffe-eau électrique ancien",
+  "Acheter et utiliser un robot aspirateur + robot tondeuse neufs",
+  "Partir en voyage de noces 2 semaines à Bali en avion (A/R depuis Paris)",
+  "Manger un burger avec steak haché au déjeuner chaque jour pendant 4 mois",
+  "Acheter un véhicule électrique neuf (en comptant la fabrication de la batterie)",
+  "Chauffer ma résidence secondaire de campagne tout l'hiver à distance",
+  "Acheter 1 jeu vidéo par semaine sur console neuve pendant 1 an",
+  "Me faire livrer mes courses à domicile chaque semaine pendant 1 an (van diesel)",
+  "Faire un tatouage au laser (plusieurs séances sous anesthésie locale en clinique)",
+  "Boire un café capsule par jour pendant 5 ans (production + machine)",
+  "Acheter une montre connectée neuve par an pendant 3 ans",
+  "Faire appel à un plombier en urgence (déplacement van diesel, pièces importées)",
+  "Aller à un concert à l'étranger en avion (week-end Paris → Londres → retour)",
+  "Partir en week-end à Amsterdam en voiture seul depuis Paris (A/R ~500 km)",
+  "Manger des crevettes tropicales importées par avion une fois par semaine pendant 1 an",
+  "Laisser mon ordinateur allumé 24h/24 pendant toute une année sans veille",
+  "Prendre l'avion Paris → Barcelone au lieu du train (A/R)",
+  "Acheter et faire fonctionner une imprimante laser couleur à la maison pendant 3 ans",
+  "Faire tondre ma pelouse avec un robot thermique tout l'été pendant 5 ans",
+  "Consommer du lait entier de vache chaque jour pendant 7 ans (environ 2L/semaine)",
+  "Prendre un taxi ou VTC pour tous mes déplacements en ville pendant 6 mois"
+];
 
-let currentAppMode = 'standard';
-let proposals = MODES[currentAppMode].proposals;
-// Build a map id→score for Firestore lookup
-let scores = proposals.map(p => ({ id: p.id, text: p.text, co2: p.co2, wins: 0, losses: 0, elo: 1200 }));
-let scoreById = Object.fromEntries(scores.map(s => [s.id, s]));
+let scores = proposals.map((text, i) => ({ id: i, text, wins: 0, losses: 0 }));
 let totalVotes = 0;
 let currentA = -1;
 let currentB = -1;
-let currentRankMode = 'preferred';
+let currentMode = 'preferred';
 let voted = false;
-let unsubscribe = null; // Firestore listener cleanup
 
 // --- Database status indicator ---
-function setDbStatus(online, detail) {
+function setDbStatus(online) {
   const dot = document.getElementById('live-dot');
   const txt = document.getElementById('db-status-text');
   if (online) {
     dot.classList.remove('offline');
-    txt.textContent = `Connecté · ${currentAppMode === 'labo' ? 'labo recherche' : 'standard'} · votes en direct`;
+    txt.textContent = 'Base de données connectée · votes partagés en direct';
   } else {
     dot.classList.add('offline');
-    txt.textContent = detail || 'Hors ligne · reconnexion en cours…';
+    txt.textContent = 'Hors ligne · reconnexion en cours…';
   }
-}
-
-// --- ELO ---
-function computeElo(scores) {
-  // Recompute ELO from scratch based on win/loss counts
-  // Simple approximation: elo = 1200 + K * (wins - losses)
-  // More accurate: use win rate adjusted
-  scores.forEach(s => {
-    const total = s.wins + s.losses;
-    if (total === 0) { s.elo = 1200; return; }
-    const winRate = s.wins / total;
-    // Map win rate to ELO-like scale (logistic)
-    const clampedRate = Math.max(0.01, Math.min(0.99, winRate));
-    s.elo = 1200 + 400 * Math.log10(clampedRate / (1 - clampedRate)) + Math.log2(total + 1) * 5;
-  });
 }
 
 // --- Real-time Firestore listener ---
 function listenForUpdates() {
-  if (unsubscribe) unsubscribe(); // cleanup previous listener
-  const coll = MODES[currentAppMode].coll;
-
-  unsubscribe = onSnapshot(
-    collection(db, coll),
+  onSnapshot(
+    collection(db, COLL),
     (snapshot) => {
       setDbStatus(true);
       let totalWins = 0;
       snapshot.forEach(docSnap => {
-        const docId = docSnap.id;
-        if (scoreById[docId]) {
+        const idx = parseInt(docSnap.id);
+        if (!isNaN(idx) && idx >= 0 && idx < proposals.length) {
           const data = docSnap.data();
-          scoreById[docId].wins = data.wins || 0;
-          scoreById[docId].losses = data.losses || 0;
+          scores[idx].wins = data.wins || 0;
+          scores[idx].losses = data.losses || 0;
           totalWins += (data.wins || 0);
         }
       });
       totalVotes = totalWins;
-      computeElo(scores);
       document.getElementById('total-votes').textContent = totalVotes;
       renderLeaderboard();
     },
     (error) => {
       console.error('Firestore listen error:', error);
-      if (error.code === 'permission-denied') {
-        setDbStatus(false, '⚠️ Règles Firestore expirées — mettez à jour les règles dans la console Firebase');
-      } else {
-        setDbStatus(false, 'Hors ligne · reconnexion en cours…');
-      }
+      setDbStatus(false);
     }
   );
-}
-
-// --- Mode switch ---
-function switchMode(mode) {
-  if (mode === currentAppMode) return;
-  currentAppMode = mode;
-  proposals = MODES[mode].proposals;
-  scores = proposals.map(p => ({ id: p.id, text: p.text, co2: p.co2, wins: 0, losses: 0, elo: 1200 }));
-  scoreById = Object.fromEntries(scores.map(s => [s.id, s]));
-  totalVotes = 0;
-
-  // Update UI
-  document.getElementById('header-label').textContent = MODES[mode].label;
-  document.getElementById('subtitle').textContent = MODES[mode].subtitle;
-  document.getElementById('total-votes').textContent = '0';
-  document.getElementById('leaderboard').innerHTML =
-    '<div class="no-votes">Votez pour voir le classement apparaître…</div>';
-
-  // Update mode buttons
-  document.getElementById('btn-standard').classList.toggle('active', mode === 'standard');
-  document.getElementById('btn-labo').classList.toggle('active', mode === 'labo');
-
-  // Re-listen to new Firestore collection
-  listenForUpdates();
-  updatePair();
 }
 
 // --- Pair management ---
@@ -761,10 +669,8 @@ function updatePair() {
   const [a, b] = getRandomPair();
   currentA = a;
   currentB = b;
-  document.getElementById('text-a').textContent = proposals[a].text;
-  document.getElementById('text-b').textContent = proposals[b].text;
-  document.getElementById('co2-a').textContent = `~${proposals[a].co2} kg CO₂`;
-  document.getElementById('co2-b').textContent = `~${proposals[b].co2} kg CO₂`;
+  document.getElementById('text-a').textContent = proposals[a];
+  document.getElementById('text-b').textContent = proposals[b];
   document.getElementById('pair-label').textContent =
     `Duel #${totalVotes + 1} — Lequel préféreriez-vous émettre ?`;
   const cardA = document.getElementById('card-a');
@@ -782,8 +688,6 @@ async function vote(choice) {
 
   const winnerIdx = choice === 0 ? currentA : currentB;
   const loserIdx  = choice === 0 ? currentB : currentA;
-  const winnerId = proposals[winnerIdx].id;
-  const loserId  = proposals[loserIdx].id;
 
   // Visual feedback
   const winCard  = choice === 0 ? 'card-a' : 'card-b';
@@ -792,23 +696,18 @@ async function vote(choice) {
   document.getElementById(loseCard).classList.add('loser');
 
   // Atomic Firestore update
-  const coll = MODES[currentAppMode].coll;
   try {
     const batch = writeBatch(db);
-    batch.set(doc(db, coll, winnerId), { wins: increment(1) }, { merge: true });
-    batch.set(doc(db, coll, loserId), { losses: increment(1) }, { merge: true });
+    batch.set(doc(db, COLL, String(winnerIdx)), { wins: increment(1) }, { merge: true });
+    batch.set(doc(db, COLL, String(loserIdx)), { losses: increment(1) }, { merge: true });
     await batch.commit();
   } catch (e) {
     console.error('Vote write error:', e);
-    if (e.code === 'permission-denied') {
-      setDbStatus(false, '⚠️ Règles Firestore expirées — mettez à jour les règles dans la console Firebase');
-    } else {
-      setDbStatus(false);
-    }
-    scoreById[winnerId].wins++;
-    scoreById[loserId].losses++;
+    setDbStatus(false);
+    // Optimistic local fallback
+    scores[winnerIdx].wins++;
+    scores[loserIdx].losses++;
     totalVotes++;
-    computeElo(scores);
     document.getElementById('total-votes').textContent = totalVotes;
     renderLeaderboard();
   }
@@ -818,7 +717,7 @@ async function vote(choice) {
 
 // --- Ranking ---
 function showRanking(mode, btn) {
-  currentRankMode = mode;
+  currentMode = mode;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   renderLeaderboard();
@@ -834,11 +733,20 @@ function renderLeaderboard() {
   }
 
   let sorted;
-  if (currentRankMode === 'preferred') {
-    sorted = [...played].sort((a, b) => b.elo - a.elo);
-  } else if (currentRankMode === 'refused') {
-    sorted = [...played].sort((a, b) => a.elo - b.elo);
+  if (currentMode === 'preferred') {
+    sorted = [...played].sort((a, b) => {
+      const rA = a.wins / (a.wins + a.losses);
+      const rB = b.wins / (b.wins + b.losses);
+      return rB - rA || (b.wins + b.losses) - (a.wins + a.losses);
+    });
+  } else if (currentMode === 'refused') {
+    sorted = [...played].sort((a, b) => {
+      const rA = a.wins / (a.wins + a.losses);
+      const rB = b.wins / (b.wins + b.losses);
+      return rA - rB || (b.wins + b.losses) - (a.wins + a.losses);
+    });
   } else {
+    // Contested: closest to 50% win rate with most votes
     sorted = [...played].sort((a, b) => {
       const tA = a.wins + a.losses, tB = b.wins + b.losses;
       const rA = tA > 0 ? Math.abs(a.wins / tA - 0.5) : 1;
@@ -847,21 +755,23 @@ function renderLeaderboard() {
     });
   }
 
-  const maxElo = Math.max(...sorted.map(s => s.elo));
-  const minElo = Math.min(...sorted.map(s => s.elo));
+  const rates = sorted.map(s => s.wins / (s.wins + s.losses));
+  const maxR = Math.max(...rates);
+  const minR = Math.min(...rates);
 
   lb.innerHTML = sorted.map((s, i) => {
     const total = s.wins + s.losses;
     const winRate = Math.round(s.wins / total * 100);
-    const barW = maxElo === minElo ? 50 : Math.round((s.elo - minElo) / (maxElo - minElo) * 100);
+    const rate = s.wins / total;
+    const barW = maxR === minR ? 50 : Math.round((rate - minR) / (maxR - minR) * 100);
     const isTop3 = i < 3;
     const isLast = i === sorted.length - 1 && sorted.length > 3;
     const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}`;
 
     return `<div class="rank-item ${isTop3 ? 'top-3' : ''} ${isLast ? 'last' : ''}">
       <div class="rank-num">${medal}</div>
-      <div class="rank-text">${s.text.substring(0, 85)}${s.text.length > 85 ? '…' : ''} <span style="color:var(--muted);font-size:0.75rem">(${s.co2} kg)</span></div>
-      <div class="rank-score">ELO ${Math.round(s.elo)} · ${winRate}% (${total}v)</div>
+      <div class="rank-text">${s.text.substring(0, 90)}${s.text.length > 90 ? '…' : ''}</div>
+      <div class="rank-score">${winRate}% (${total}v)</div>
       <div class="rank-bar-wrap">
         <div class="rank-bar" style="width:${barW}%"></div>
       </div>
@@ -873,7 +783,6 @@ function renderLeaderboard() {
 window.vote = vote;
 window.nextPair = function() { updatePair(); };
 window.showRanking = showRanking;
-window.switchMode = switchMode;
 
 // --- Initialize ---
 updatePair();
