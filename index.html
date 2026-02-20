@@ -747,8 +747,8 @@ function playClick() {
     osc.connect(gain);
     gain.connect(audioCtx.destination);
     osc.frequency.value = 600;
-    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.06);
     osc.start(audioCtx.currentTime);
     osc.stop(audioCtx.currentTime + 0.08);
   } catch(e) {}
@@ -923,7 +923,17 @@ async function vote(choice) {
     showStreak(Math.round(ws.wins / wTotal * 100));
   }
 
-  // Atomic Firestore update
+  // Transition fluide vers le prochain duel (lancée immédiatement, indépendante du réseau)
+  const duel = document.getElementById('duel');
+  setTimeout(() => {
+    duel.classList.add('transitioning');
+    setTimeout(() => {
+      updatePair();
+      duel.classList.remove('transitioning');
+    }, 300);
+  }, 900);
+
+  // Atomic Firestore update (en parallèle de la transition)
   const coll = MODES[currentAppMode].coll;
   try {
     const batch = writeBatch(db);
@@ -944,16 +954,6 @@ async function vote(choice) {
     document.getElementById('total-votes').textContent = totalVotes;
     renderLeaderboard();
   }
-
-  // Transition fluide vers le prochain duel
-  const duel = document.getElementById('duel');
-  setTimeout(() => {
-    duel.classList.add('transitioning');
-    setTimeout(() => {
-      updatePair();
-      duel.classList.remove('transitioning');
-    }, 300);
-  }, 1000);
 }
 
 // --- Ranking ---
