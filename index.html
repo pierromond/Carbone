@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⚖️ Dilemmes Carbone — 100 kg à Choisir</title>
+<title>⚖️ Dilemmes Carbone</title>
+<meta property="og:title" content="Dilemmes Carbone — Quel CO₂ choisir ?">
+<meta property="og:description" content="Chaque geste a un coût climatique. Votez pour hiérarchiser vos priorités dans ces dilemmes éthiques calibrés ADEME.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://pierromond.github.io/Carbone/">
+<meta name="description" content="Dilemmes carbone : comparez des actions du quotidien et votez. Données ADEME, votes collectifs en temps réel.">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&family=Lora:ital@0;1&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -227,6 +232,9 @@
     color: var(--accent);
     font-weight: 500;
   }
+
+  .card-co2.co2-high span { color: var(--danger); }
+  .card-co2.co2-low span { color: var(--accent2); }
 
   .vs-divider {
     display: flex;
@@ -534,6 +542,42 @@
       padding: 0.75rem 1rem 0;
     }
   }
+
+  /* Duel transition */
+  #duel {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  #duel.transitioning {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+
+  /* Post-vote info */
+  .post-vote-info {
+    text-align: center;
+    margin: 1rem 0 0.5rem;
+    min-height: 2.5rem;
+  }
+  .equiv-bubble {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    padding: 0.3rem 0.8rem;
+    display: inline-block;
+    letter-spacing: 0.05em;
+  }
+  .equiv-bubble.visible { opacity: 1; }
+  .streak-msg {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent2);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    margin-top: 0.3rem;
+  }
+  .streak-msg.visible { opacity: 1; }
 </style>
 </head>
 <body>
@@ -550,32 +594,37 @@
 
 <header>
   <div class="header-label" id="header-label">Éthique climatique · Expérience participative</div>
-  <h1>100 kg de<br><em>CO₂</em> à choisir</h1>
+  <h1>Quel <em>CO₂</em><br>choisir ?</h1>
   <p class="subtitle" id="subtitle">Chaque geste, chaque voyage, chaque usage numérique a un coût climatique. Ces dilemmes vous invitent à peser vos priorités.</p>
   <div class="co2-badge">≈ 50 à 500 kg CO₂ équivalent par option</div>
 </header>
 
 <div class="arena">
-  <div class="question-label" id="pair-label">Duel #1 sur 50 — Lequel préféreriez-vous émettre ?</div>
+  <div class="question-label" id="pair-label">Duel #1 — Lequel préféreriez-vous émettre ?</div>
 
   <div class="duel" id="duel">
-    <div class="choice-card" id="card-a" onclick="vote(0)">
+    <div class="choice-card" id="card-a" onclick="vote(0)" role="button" tabindex="0">
       <div class="card-letter">A</div>
       <div class="card-tag">Option A</div>
       <div class="card-text" id="text-a">…</div>
-      <div class="card-co2">🌿 <span id="co2-a">~100 kg CO₂</span></div>
+      <div class="card-co2" id="co2-wrap-a">🌿 <span id="co2-a">~100 kg CO₂</span></div>
     </div>
     <div class="vs-divider">
       <div class="vs-line"></div>
       <div class="vs-text">ou</div>
       <div class="vs-line"></div>
     </div>
-    <div class="choice-card" id="card-b" onclick="vote(1)">
+    <div class="choice-card" id="card-b" onclick="vote(1)" role="button" tabindex="0">
       <div class="card-letter">B</div>
       <div class="card-tag">Option B</div>
       <div class="card-text" id="text-b">…</div>
-      <div class="card-co2">🌿 <span id="co2-b">~100 kg CO₂</span></div>
+      <div class="card-co2" id="co2-wrap-b">🌿 <span id="co2-b">~100 kg CO₂</span></div>
     </div>
+  </div>
+
+  <div class="post-vote-info" id="post-vote-info">
+    <div class="equiv-bubble" id="equiv-bubble"></div>
+    <div class="streak-msg" id="streak-msg"></div>
   </div>
 
   <div class="vote-counter">
@@ -656,6 +705,7 @@ let currentA = -1;
 let currentB = -1;
 let currentRankMode = 'preferred';
 let voted = false;
+let localDuelCount = 0;
 let unsubscribe = null; // Firestore listener cleanup
 
 // --- Database status indicator ---
@@ -684,6 +734,54 @@ function computeElo(scores) {
     const clampedRate = Math.max(0.01, Math.min(0.99, winRate));
     s.elo = 1200 + 400 * Math.log10(clampedRate / (1 - clampedRate)) + Math.log2(total + 1) * 5;
   });
+}
+
+// --- Sound & haptic ---
+let audioCtx = null;
+function playClick() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.frequency.value = 600;
+    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime + 0.08);
+  } catch(e) {}
+}
+
+// --- Post-vote info ---
+function co2Equivalences(kg) {
+  const km = Math.round(kg / 0.192);
+  const pct = (kg / 10000 * 100).toFixed(1);
+  return `🌍 ${kg} kg CO₂ ≈ ${km} km en voiture · ${pct} % empreinte annuelle FR`;
+}
+
+function showEquiv(kg) {
+  const el = document.getElementById('equiv-bubble');
+  el.textContent = co2Equivalences(kg);
+  el.classList.add('visible');
+}
+
+function showStreak(pct) {
+  const el = document.getElementById('streak-msg');
+  if (pct >= 70) {
+    el.textContent = `🔥 ${pct} % des votants partagent votre choix !`;
+  } else if (pct <= 30) {
+    el.textContent = `⚡ Choix audacieux ! Seulement ${pct} % des votants sont d'accord`;
+  } else {
+    el.textContent = `⚖️ Duel serré — ${pct} % des votants partagent votre choix`;
+  }
+  el.classList.add('visible');
+}
+
+function hidePostVote() {
+  document.getElementById('equiv-bubble').classList.remove('visible');
+  document.getElementById('streak-msg').classList.remove('visible');
 }
 
 // --- Real-time Firestore listener ---
@@ -748,6 +846,14 @@ function switchMode(mode) {
 
 // --- Pair management ---
 function getRandomPair() {
+  if (proposals.length < 2) return [0, 0];
+  // 10 % : paire thématique (propositions consécutives)
+  // 90 % : duel aléatoire
+  const maxPairIdx = Math.floor(proposals.length / 2);
+  if (Math.random() < 0.1 && maxPairIdx > 0) {
+    const p = Math.floor(Math.random() * maxPairIdx);
+    return [p * 2, p * 2 + 1];
+  }
   let a, b;
   do {
     a = Math.floor(Math.random() * proposals.length);
@@ -758,6 +864,8 @@ function getRandomPair() {
 
 function updatePair() {
   voted = false;
+  localDuelCount++;
+  hidePostVote();
   const [a, b] = getRandomPair();
   currentA = a;
   currentB = b;
@@ -765,8 +873,18 @@ function updatePair() {
   document.getElementById('text-b').textContent = proposals[b].text;
   document.getElementById('co2-a').textContent = `~${proposals[a].co2} kg CO₂`;
   document.getElementById('co2-b').textContent = `~${proposals[b].co2} kg CO₂`;
+  // Repère visuel CO₂ : colorer si écart > 50 %
+  const wrapA = document.getElementById('co2-wrap-a');
+  const wrapB = document.getElementById('co2-wrap-b');
+  wrapA.className = 'card-co2';
+  wrapB.className = 'card-co2';
+  const coA = proposals[a].co2, coB = proposals[b].co2;
+  if (coA && coB && Math.max(coA, coB) / Math.min(coA, coB) > 1.5) {
+    if (coA > coB) { wrapA.classList.add('co2-high'); wrapB.classList.add('co2-low'); }
+    else { wrapB.classList.add('co2-high'); wrapA.classList.add('co2-low'); }
+  }
   document.getElementById('pair-label').textContent =
-    `Duel #${totalVotes + 1} — Lequel préféreriez-vous émettre ?`;
+    `Duel #${localDuelCount} — Lequel préféreriez-vous émettre ?`;
   const cardA = document.getElementById('card-a');
   const cardB = document.getElementById('card-b');
   cardA.classList.remove('winner', 'loser');
@@ -785,11 +903,25 @@ async function vote(choice) {
   const winnerId = proposals[winnerIdx].id;
   const loserId  = proposals[loserIdx].id;
 
+  // Sound + haptic
+  playClick();
+  if (navigator.vibrate) navigator.vibrate(30);
+
   // Visual feedback
   const winCard  = choice === 0 ? 'card-a' : 'card-b';
   const loseCard = choice === 0 ? 'card-b' : 'card-a';
   document.getElementById(winCard).classList.add('winner');
   document.getElementById(loseCard).classList.add('loser');
+
+  // Equivalence pédagogique
+  showEquiv(proposals[winnerIdx].co2);
+
+  // Streak — montre le % d'accord si assez de données
+  const ws = scoreById[winnerId];
+  const wTotal = ws.wins + ws.losses;
+  if (wTotal >= 3) {
+    showStreak(Math.round(ws.wins / wTotal * 100));
+  }
 
   // Atomic Firestore update
   const coll = MODES[currentAppMode].coll;
@@ -813,7 +945,15 @@ async function vote(choice) {
     renderLeaderboard();
   }
 
-  setTimeout(updatePair, 900);
+  // Transition fluide vers le prochain duel
+  const duel = document.getElementById('duel');
+  setTimeout(() => {
+    duel.classList.add('transitioning');
+    setTimeout(() => {
+      updatePair();
+      duel.classList.remove('transitioning');
+    }, 300);
+  }, 1000);
 }
 
 // --- Ranking ---
@@ -860,7 +1000,7 @@ function renderLeaderboard() {
 
     return `<div class="rank-item ${isTop3 ? 'top-3' : ''} ${isLast ? 'last' : ''}">
       <div class="rank-num">${medal}</div>
-      <div class="rank-text">${s.text.substring(0, 85)}${s.text.length > 85 ? '…' : ''} <span style="color:var(--muted);font-size:0.75rem">(${s.co2} kg)</span></div>
+      <div class="rank-text">${s.text} <span style="color:var(--muted);font-size:0.75rem">(${s.co2} kg)</span></div>
       <div class="rank-score">ELO ${Math.round(s.elo)} · ${winRate}% (${total}v)</div>
       <div class="rank-bar-wrap">
         <div class="rank-bar" style="width:${barW}%"></div>
@@ -871,9 +1011,24 @@ function renderLeaderboard() {
 
 // --- Expose to window for inline onclick handlers ---
 window.vote = vote;
-window.nextPair = function() { updatePair(); };
+window.nextPair = function() {
+  const duel = document.getElementById('duel');
+  duel.classList.add('transitioning');
+  setTimeout(() => {
+    updatePair();
+    duel.classList.remove('transitioning');
+  }, 300);
+};
 window.showRanking = showRanking;
 window.switchMode = switchMode;
+
+// --- Keyboard accessibility ---
+document.getElementById('card-a').addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); vote(0); }
+});
+document.getElementById('card-b').addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); vote(1); }
+});
 
 // --- Initialize ---
 updatePair();

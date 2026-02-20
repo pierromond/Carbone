@@ -4,7 +4,7 @@
 // Sources : ADEME Base Carbone & Impact CO₂
 // =============================================
 // ID stables : ne JAMAIS réutiliser un ID supprimé.
-// Pour ajouter : prendre le prochain numéro libre (L58, L59…).
+// Pour ajouter : prendre le prochain numéro libre (L56, L57…).
 // =============================================
 
 export const laboProposals = [
