@@ -11,7 +11,7 @@
 <meta name="description" content="Dilemmes carbone : comparez des actions du quotidien et votez. Données ADEME, votes collectifs en temps réel.">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&family=Lora:ital@0;1&display=swap" rel="stylesheet">
 <style>
-  :root {
+  :root, [data-theme="dark"] {
     --bg: #0e0e0b;
     --surface: #18180f;
     --card: #1e1e13;
@@ -22,6 +22,23 @@
     --muted: #7a7660;
     --danger: #c45c3a;
     --glow: rgba(200, 168, 75, 0.15);
+    --grain-opacity: 0.5;
+    --card-shadow: rgba(0,0,0,0.4);
+  }
+
+  [data-theme="light"] {
+    --bg: #f5f2eb;
+    --surface: #eae6dd;
+    --card: #ffffff;
+    --border: #d5d0c4;
+    --accent: #9a7d2e;
+    --accent2: #3d6e28;
+    --text: #2a2820;
+    --muted: #8a8578;
+    --danger: #b5432a;
+    --glow: rgba(154, 125, 46, 0.1);
+    --grain-opacity: 0.15;
+    --card-shadow: rgba(0,0,0,0.08);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -42,7 +59,7 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
     pointer-events: none;
     z-index: 1000;
-    opacity: 0.5;
+    opacity: var(--grain-opacity, 0.5);
   }
 
   header {
@@ -161,7 +178,7 @@
   .choice-card:hover {
     border-color: var(--accent);
     transform: translateY(-3px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px var(--accent);
+    box-shadow: 0 12px 40px var(--card-shadow), 0 0 0 1px var(--accent);
   }
 
   .choice-card:hover::before { opacity: 1; }
@@ -541,6 +558,21 @@
       justify-content: center;
       padding: 0.75rem 1rem 0;
     }
+    .theme-toggle {
+      position: relative;
+      top: auto;
+      right: auto;
+      margin: 0.5rem auto 0;
+      display: block;
+    }
+  }
+
+  /* Theme toggle */
+  .theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 999;
   }
 
   /* Duel transition */
@@ -590,6 +622,11 @@
   <button class="mode-btn" id="btn-labo" onclick="switchMode('labo')">
     <span class="mode-icon">🔬</span>Labo recherche
   </button>
+</div>
+
+<button class="mode-btn theme-toggle" id="btn-theme" onclick="toggleTheme()">
+  <span class="mode-icon" id="theme-icon">☀️</span>Light
+</button>
 </div>
 
 <header>
@@ -839,6 +876,12 @@ function switchMode(mode) {
   document.getElementById('btn-standard').classList.toggle('active', mode === 'standard');
   document.getElementById('btn-labo').classList.toggle('active', mode === 'labo');
 
+  // Update URL for sharing
+  const url = new URL(window.location);
+  if (mode === 'standard') url.searchParams.delete('mode');
+  else url.searchParams.set('mode', mode);
+  history.replaceState(null, '', url);
+
   // Re-listen to new Firestore collection
   listenForUpdates();
   updatePair();
@@ -1022,6 +1065,31 @@ window.nextPair = function() {
 window.showRanking = showRanking;
 window.switchMode = switchMode;
 
+// --- Theme toggle ---
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') !== 'light';
+  const next = isDark ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('carbone-theme', next);
+  const btn = document.getElementById('btn-theme');
+  const icon = document.getElementById('theme-icon');
+  if (next === 'light') {
+    icon.textContent = '🌙';
+    btn.childNodes[1].textContent = 'Dark';
+  } else {
+    icon.textContent = '☀️';
+    btn.childNodes[1].textContent = 'Light';
+  }
+}
+window.toggleTheme = toggleTheme;
+
+// Restore saved theme
+(function() {
+  const saved = localStorage.getItem('carbone-theme');
+  if (saved === 'light') toggleTheme();
+})();
+
 // --- Keyboard accessibility ---
 document.getElementById('card-a').addEventListener('keydown', e => {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); vote(0); }
@@ -1031,8 +1099,14 @@ document.getElementById('card-b').addEventListener('keydown', e => {
 });
 
 // --- Initialize ---
-updatePair();
-listenForUpdates();
+// Read ?mode= from URL
+const urlMode = new URLSearchParams(window.location.search).get('mode');
+if (urlMode === 'labo') {
+  switchMode('labo');
+} else {
+  updatePair();
+  listenForUpdates();
+}
 </script>
 </body>
 </html>
