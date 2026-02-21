@@ -610,6 +610,572 @@
     margin-top: 0.3rem;
   }
   .streak-msg.visible { opacity: 1; }
+
+  /* ====== WELCOME OVERLAY ====== */
+  .welcome-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.7s ease, visibility 0.7s ease;
+  }
+  .welcome-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .welcome-content {
+    text-align: center;
+    max-width: 580px;
+    padding: 2rem;
+    animation: welcome-in 1s ease both;
+  }
+  @keyframes welcome-in {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .welcome-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    color: var(--accent);
+    margin-bottom: 2rem;
+  }
+  .welcome-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2.8rem, 9vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+  }
+  .welcome-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .welcome-desc {
+    font-size: 1.1rem;
+    color: var(--muted);
+    line-height: 1.75;
+    margin-bottom: 2rem;
+    font-style: italic;
+  }
+  .welcome-badges {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2.5rem;
+  }
+  .welcome-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0.45rem 0.9rem;
+    border-radius: 3px;
+  }
+  .welcome-start {
+    display: inline-block;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--bg);
+    background: var(--accent);
+    border: none;
+    padding: 1rem 2.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.03em;
+    position: relative;
+    overflow: hidden;
+  }
+  .welcome-start:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 40px rgba(200, 168, 75, 0.35);
+  }
+  .welcome-start::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 50%);
+  }
+  .welcome-count {
+    margin-top: 1.8rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+  .welcome-count span { color: var(--accent); font-weight: 500; }
+  .welcome-how {
+    margin-top: 2.5rem;
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .how-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    max-width: 140px;
+  }
+  .how-num {
+    width: 28px; height: 28px;
+    background: var(--glow);
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .how-text {
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  /* ====== PROGRESS BAR ====== */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  .progress-wrap.visible { opacity: 1; }
+  .progress-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 2px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .progress-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    white-space: nowrap;
+    min-width: 3.5rem;
+    text-align: right;
+  }
+  .progress-dots {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+  .progress-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: all 0.4s ease;
+  }
+  .progress-dot.done { background: var(--accent); }
+  .progress-dot.current {
+    background: var(--accent);
+    animation: dot-pulse 1.5s ease infinite;
+  }
+  @keyframes dot-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(200, 168, 75, 0.4); }
+    50% { box-shadow: 0 0 0 5px rgba(200, 168, 75, 0); }
+  }
+
+  /* ====== RESULTS OVERLAY ====== */
+  .results-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 800;
+    overflow-y: auto;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+  }
+  .results-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+  .results-content {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 3rem 2rem 4rem;
+    text-align: center;
+    animation: results-slide 0.8s ease both;
+  }
+  @keyframes results-slide {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .results-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+  }
+  .results-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+  .results-title em { font-style: italic; color: var(--accent); }
+  .results-desc {
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 2.5rem;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  .profile-chart {
+    text-align: left;
+    margin-bottom: 2.5rem;
+  }
+  /* Persona card */
+  .persona-card {
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    padding: 2rem 1.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .persona-emoji { font-size: 3rem; margin-bottom: 0.75rem; }
+  .persona-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  .persona-desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.6;
+    font-style: italic;
+  }
+  /* Necessity gauge */
+  .gauge-wrap {
+    margin-bottom: 2rem;
+  }
+  .gauge-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+    text-align: center;
+  }
+  .gauge-bar {
+    height: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .gauge-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 3px;
+    transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .gauge-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+  .gauge-pct {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text);
+    font-weight: 500;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  }
+  /* Duel recap list */
+  .recap-list {
+    margin-bottom: 2rem;
+  }
+  .recap-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem 0.6rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+    line-height: 1.45;
+    text-align: left;
+  }
+  .recap-item:last-child { border-bottom: none; }
+  .recap-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    min-width: 1.5rem;
+    text-align: center;
+    padding-top: 0.15rem;
+  }
+  .recap-choice {
+    flex: 1;
+    color: var(--text);
+  }
+  .recap-co2 {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    white-space: nowrap;
+    padding-top: 0.15rem;
+  }
+  .recap-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+    white-space: nowrap;
+    margin-top: 0.15rem;
+    display: inline-block;
+  }
+  .recap-tag.majority {
+    background: rgba(93, 138, 69, 0.15);
+    color: var(--accent2);
+  }
+  .recap-tag.rebel {
+    background: rgba(196, 92, 58, 0.15);
+    color: var(--danger);
+  }
+  .recap-tag.contested {
+    background: rgba(200, 168, 75, 0.12);
+    color: var(--accent);
+  }
+  /* Boldest picks */
+  .bold-picks {
+    margin-bottom: 1.5rem;
+  }
+  .bold-pick-duel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.75rem;
+  }
+  .bold-duel-header {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--danger);
+    margin-bottom: 0.5rem;
+  }
+  .bold-duel-options {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .bold-duel-chosen, .bold-duel-rejected {
+    flex: 1;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+  .bold-duel-chosen {
+    background: rgba(93, 138, 69, 0.1);
+    border: 1px solid rgba(93, 138, 69, 0.3);
+  }
+  .bold-duel-rejected {
+    background: rgba(196, 92, 58, 0.05);
+    border: 1px solid rgba(196, 92, 58, 0.15);
+    opacity: 0.7;
+  }
+  .bold-duel-label {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+    letter-spacing: 0.03em;
+  }
+  .bold-duel-text {
+    display: block;
+    color: var(--text);
+  }
+  .bold-duel-vs {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .bold-duel-stat {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 0.5rem;
+    text-align: center;
+  }
+  .results-insight {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--text);
+    text-align: left;
+  }
+  .results-comparison {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    text-align: left;
+  }
+  .comparison-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .comparison-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+  .comparison-stat:last-child { border-bottom: none; }
+  .comparison-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .results-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2.5rem;
+  }
+  .results-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--muted);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .results-btn:hover { color: var(--text); border-color: var(--muted); }
+  .results-btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+    font-weight: 500;
+  }
+  .results-btn.primary:hover {
+    box-shadow: 0 6px 25px rgba(200, 168, 75, 0.35);
+    transform: translateY(-2px);
+  }
+
+  /* ====== CONFETTI ====== */
+  .confetti-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    overflow: hidden;
+  }
+  .confetti-piece {
+    position: absolute;
+    width: 8px; height: 12px;
+    top: -20px;
+    animation: confetti-fall linear forwards;
+  }
+  @keyframes confetti-fall {
+    0% { transform: translateY(0) rotateZ(0deg) rotateX(0deg); opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateY(105vh) rotateZ(720deg) rotateX(360deg); opacity: 0; }
+  }
+
+  /* ====== TOAST ====== */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--card);
+    border: 1px solid var(--accent);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    z-index: 1001;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 30px var(--card-shadow);
+  }
+  .toast.visible { transform: translateX(-50%) translateY(0); }
+
+  /* ====== SESSION COMPLETE BADGE ====== */
+  .session-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent2);
+    background: rgba(93, 138, 69, 0.1);
+    border: 1px solid rgba(93, 138, 69, 0.3);
+    padding: 0.3rem 0.7rem;
+    border-radius: 3px;
+    margin-top: 0.5rem;
+  }
+
+  /* ====== RESPONSIVE for new elements ====== */
+  @media (max-width: 640px) {
+    .welcome-how { flex-direction: column; align-items: center; }
+    .profile-label { width: 5rem; font-size: 0.6rem; }
+    .profile-icon { width: 1.5rem; font-size: 1rem; }
+    .progress-dots { gap: 0.35rem; }
+    .progress-dot { width: 6px; height: 6px; }
+    .results-actions { flex-direction: column; align-items: stretch; }
+  }
 </style>
 </head>
 <body>
@@ -629,6 +1195,62 @@
 </button>
 </div>
 
+<!-- ====== WELCOME OVERLAY ====== -->
+<div class="welcome-overlay" id="welcome-overlay">
+  <div class="welcome-content">
+    <div class="welcome-label">EXPÉRIENCE PARTICIPATIVE</div>
+    <h1 class="welcome-title">Dilemmes<br><em>Carbone</em></h1>
+    <p class="welcome-desc">Chaque geste a un coût climatique. En 13 dilemmes, découvrez vos priorités et comparez-les à celles de la communauté.</p>
+    <div class="welcome-badges">
+      <span class="welcome-badge">⏱ ~3 min</span>
+      <span class="welcome-badge">🔒 100 % anonyme</span>
+      <span class="welcome-badge">📊 Résultats en direct</span>
+    </div>
+    <button class="welcome-start" onclick="startSession()">Commencer l'expérience</button>
+    <div class="welcome-count"><span id="welcome-votes">0</span> votes déjà enregistrés</div>
+    <div class="welcome-how">
+      <div class="how-step">
+        <div class="how-num">1</div>
+        <div class="how-text">Lisez deux scénarios avec un coût CO₂</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">2</div>
+        <div class="how-text">Choisissez celui que vous préférez émettre</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">3</div>
+        <div class="how-text">Découvrez votre profil carbone</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== RESULTS OVERLAY ====== -->
+<div class="results-overlay" id="results-overlay">
+  <div class="results-content">
+    <div class="results-label">SESSION TERMINÉE · 13 DILEMMES</div>
+    <h2 class="results-title">Votre profil<br><em>carbone</em></h2>
+    <p class="results-desc" id="results-desc">En 13 dilemmes, voici ce qui se dessine dans vos choix :</p>
+    <div id="persona-container"></div>
+    <div id="gauge-container"></div>
+    <div id="bold-picks-container"></div>
+    <div class="results-comparison" id="results-comparison"></div>
+    <div id="recap-container"></div>
+    <div class="results-actions">
+      <button class="results-btn primary" onclick="shareResults()">📤 Partager mes résultats</button>
+      <button class="results-btn" onclick="showLeaderboardFromResults()">🏆 Voir le classement collectif</button>
+      <button class="results-btn" onclick="restartSession()">🔄 Recommencer (13 dilemmes)</button>
+      <button class="results-btn" onclick="freePlay()">∞ Continuer librement</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== CONFETTI CONTAINER ====== -->
+<div class="confetti-container" id="confetti-container"></div>
+
+<!-- ====== TOAST ====== -->
+<div class="toast" id="toast"></div>
+
 <header>
   <div class="header-label" id="header-label">Éthique climatique · Expérience participative</div>
   <h1>Quel <em>CO₂</em><br>choisir ?</h1>
@@ -636,7 +1258,16 @@
   <div class="co2-badge">≈ 50 à 500 kg CO₂ équivalent par option</div>
 </header>
 
-<div class="arena">
+<div class="arena" id="arena">
+  <!-- Progress bar -->
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+    </div>
+    <div class="progress-text" id="progress-text">1 / 13</div>
+  </div>
+  <div class="progress-dots" id="progress-dots"></div>
+
   <div class="question-label" id="pair-label">Duel #1 — Lequel préféreriez-vous émettre ?</div>
 
   <div class="duel" id="duel">
@@ -715,6 +1346,55 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // =============================================
+// Category metadata
+// =============================================
+const CAT_META_STD = {
+  transport: { icon: '🚗', label: 'Transport' },
+  alimentation: { icon: '🍖', label: 'Alimentation' },
+  numérique: { icon: '💻', label: 'Numérique' },
+  énergie: { icon: '⚡', label: 'Énergie' },
+  consommation: { icon: '🛍️', label: 'Consommation' },
+  divers: { icon: '📦', label: 'Divers' },
+  méta: { icon: '🤖', label: 'Méta' }
+};
+const CAT_META_LABO = {
+  missions: { icon: '✈️', label: 'Missions' },
+  calcul: { icon: '🖥️', label: 'Calcul HPC' },
+  équipement: { icon: '🔧', label: 'Équipement' },
+  consommables: { icon: '🧪', label: 'Consommables' },
+  énergie: { icon: '⚡', label: 'Énergie' },
+  terrain: { icon: '📡', label: 'Terrain' },
+  enseignement: { icon: '📚', label: 'Enseignement' },
+  méta: { icon: '🤖', label: 'Méta' }
+};
+
+function getCat(id) {
+  const num = parseInt(id.substring(1));
+  if (id.startsWith('S')) {
+    if (num <= 12) return 'transport';
+    if (num <= 24) return 'alimentation';
+    if (num <= 34) return 'numérique';
+    if (num <= 42) return 'énergie';
+    if (num <= 50) return 'consommation';
+    if (num <= 56) return 'divers';
+    return 'méta';
+  }
+  // Labo
+  if (num <= 10) return 'missions';
+  if (num <= 22) return 'calcul';
+  if (num <= 30) return 'équipement';
+  if (num <= 38) return 'consommables';
+  if (num <= 44) return 'énergie';
+  if (num <= 50) return 'terrain';
+  if (num <= 54) return 'enseignement';
+  return 'méta';
+}
+
+function getCatMeta() {
+  return currentAppMode === 'labo' ? CAT_META_LABO : CAT_META_STD;
+}
+
+// =============================================
 // Mode management: standard vs labo
 // =============================================
 const MODES = {
@@ -734,7 +1414,6 @@ const MODES = {
 
 let currentAppMode = 'standard';
 let proposals = MODES[currentAppMode].proposals;
-// Build a map id→score for Firestore lookup
 let scores = proposals.map(p => ({ id: p.id, text: p.text, co2: p.co2, wins: 0, losses: 0, elo: 1200 }));
 let scoreById = Object.fromEntries(scores.map(s => [s.id, s]));
 let totalVotes = 0;
@@ -743,7 +1422,422 @@ let currentB = -1;
 let currentRankMode = 'preferred';
 let voted = false;
 let localDuelCount = 0;
-let unsubscribe = null; // Firestore listener cleanup
+let unsubscribe = null;
+
+// =============================================
+// SESSION MANAGEMENT (Moral Machine style)
+// =============================================
+const SESSION_SIZE = 13;
+let sessionMode = true;      // true = structured 13-duel session
+let sessionPairs = [];        // pre-generated pairs for this session
+let sessionStep = 0;          // current step (0-indexed)
+let sessionVotes = [];        // [{winnerIdx, loserIdx, winnerId, loserId}]
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function generateSessionPairs() {
+  const n = proposals.length;
+  const pairs = [];
+
+  // Thematic pairs: consecutive proposals (S01/S02, S03/S04...) = necessity vs comfort
+  const thematicPairs = [];
+  for (let i = 0; i < n - 1; i += 2) {
+    thematicPairs.push([i, i + 1]);
+  }
+  shuffle(thematicPairs);
+
+  // Take ~8 thematic pairs (strong ethical tension)
+  const numThematic = Math.min(8, thematicPairs.length);
+  for (let i = 0; i < numThematic && pairs.length < SESSION_SIZE; i++) {
+    pairs.push(thematicPairs[i]);
+  }
+
+  // Fill remaining slots with cross-category random pairs
+  let safety = 0;
+  while (pairs.length < SESSION_SIZE && safety < 300) {
+    const a = Math.floor(Math.random() * n);
+    const b = Math.floor(Math.random() * n);
+    if (a !== b) {
+      const catA = getCat(proposals[a].id);
+      const catB = getCat(proposals[b].id);
+      if (catA !== catB && catA !== 'méta' && catB !== 'méta') {
+        pairs.push([a, b]);
+      }
+    }
+    safety++;
+  }
+
+  // Fallback if not enough cross-category
+  while (pairs.length < SESSION_SIZE) {
+    let a, b;
+    do { a = Math.floor(Math.random() * n); b = Math.floor(Math.random() * n); } while (a === b);
+    pairs.push([a, b]);
+  }
+
+  shuffle(pairs);
+  return pairs.slice(0, SESSION_SIZE);
+}
+
+function initProgressDots() {
+  const container = document.getElementById('progress-dots');
+  container.innerHTML = '';
+  for (let i = 0; i < SESSION_SIZE; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'progress-dot' + (i === 0 ? ' current' : '');
+    container.appendChild(dot);
+  }
+}
+
+function updateProgress() {
+  if (!sessionMode) {
+    document.getElementById('progress-wrap').classList.remove('visible');
+    document.getElementById('progress-dots').style.display = 'none';
+    return;
+  }
+
+  document.getElementById('progress-wrap').classList.add('visible');
+  document.getElementById('progress-dots').style.display = 'flex';
+
+  const pct = (sessionStep / SESSION_SIZE) * 100;
+  document.getElementById('progress-fill').style.width = `${pct}%`;
+  document.getElementById('progress-text').textContent = `${sessionStep + 1} / ${SESSION_SIZE}`;
+
+  // Update dots
+  const dots = document.querySelectorAll('.progress-dot');
+  dots.forEach((dot, i) => {
+    dot.className = 'progress-dot';
+    if (i < sessionStep) dot.classList.add('done');
+    else if (i === sessionStep) dot.classList.add('current');
+  });
+}
+
+// =============================================
+// Welcome screen
+// =============================================
+function startSession() {
+  // Hide welcome
+  document.getElementById('welcome-overlay').classList.add('hidden');
+
+  // Initialize session
+  sessionMode = true;
+  sessionStep = 0;
+  sessionVotes = [];
+  sessionPairs = generateSessionPairs();
+
+  initProgressDots();
+  updateProgress();
+  updatePair();
+
+  // Show header & arena
+  document.querySelector('header').style.display = '';
+  document.getElementById('arena').style.display = '';
+}
+
+// =============================================
+// Results screen
+// =============================================
+function computeProfile() {
+  let necessityCount = 0;
+  let comfortCount = 0;
+  let totalThematic = 0;
+  let totalCO2Chosen = 0;
+  let totalCO2Rejected = 0;
+  let alignedWithMajority = 0;
+  const rebelPicks = []; // choices where user disagrees with majority
+
+  sessionVotes.forEach((v, i) => {
+    totalCO2Chosen += proposals[v.winnerIdx].co2;
+    totalCO2Rejected += proposals[v.loserIdx].co2;
+
+    // Necessity vs comfort (thematic pairs: consecutive IDs)
+    const wNum = parseInt(proposals[v.winnerIdx].id.substring(1));
+    const lNum = parseInt(proposals[v.loserIdx].id.substring(1));
+    if (Math.abs(wNum - lNum) === 1 && Math.min(wNum, lNum) % 2 === 1) {
+      totalThematic++;
+      if (wNum % 2 === 1) necessityCount++;
+      else comfortCount++;
+    }
+
+    // Community alignment (ELO-based: compare chosen vs rejected in this duel)
+    const winnerScore = scoreById[v.winnerId];
+    const loserScore = scoreById[v.loserId];
+    if (winnerScore && loserScore) {
+      const wElo = winnerScore.elo || 1200;
+      const lElo = loserScore.elo || 1200;
+      // Expected probability that community agrees with this choice
+      const expectedPct = Math.round(100 / (1 + Math.pow(10, (lElo - wElo) / 400)));
+      if (expectedPct >= 50) {
+        alignedWithMajority++;
+      } else {
+        rebelPicks.push({
+          duelNum: i + 1,
+          winnerText: proposals[v.winnerIdx].text,
+          loserText: proposals[v.loserIdx].text,
+          expectedPct,
+          eloDiff: Math.round(wElo - lElo)
+        });
+      }
+    } else {
+      alignedWithMajority++; // no data = neutral
+    }
+  });
+
+  // Sort rebel picks by how contrarian they are (lowest expected agreement first)
+  rebelPicks.sort((a, b) => a.expectedPct - b.expectedPct);
+
+  const avgCO2 = Math.round(totalCO2Chosen / sessionVotes.length);
+  const alignPct = Math.round(alignedWithMajority / sessionVotes.length * 100);
+  const necPct = totalThematic > 0 ? Math.round(necessityCount / totalThematic * 100) : null;
+
+  return { necessityCount, comfortCount, totalThematic, necPct, avgCO2, alignPct, rebelPicks, totalCO2Chosen, totalCO2Rejected };
+}
+
+function getPersona(profile) {
+  const { necPct, alignPct, rebelPicks } = profile;
+  const rebels = rebelPicks.length;
+
+  if (necPct !== null && necPct >= 80 && alignPct >= 60) {
+    return { emoji: '🛡️', name: 'Le Pragmatique', desc: 'Vous privilégiez la nécessité et vous êtes en phase avec le collectif. Votre boussole carbone est claire : l\'essentiel d\'abord.' };
+  }
+  if (necPct !== null && necPct >= 80 && alignPct < 60) {
+    return { emoji: '⚔️', name: 'Le Convaincu', desc: 'Vous êtes fermement du côté de la nécessité, même quand la majorité ne vous suit pas. Une vision tranchée.' };
+  }
+  if (rebels >= 5) {
+    return { emoji: '🔥', name: 'L\'Anticonformiste', desc: 'Vous n\'avez pas peur de penser différemment. Vos choix sortent souvent du consensus — vous avez vos propres critères.' };
+  }
+  if (alignPct >= 80) {
+    return { emoji: '🤝', name: 'Le Consensuel', desc: 'Vos choix s\'alignent fortement avec la communauté. Vous reflétez l\'opinion collective sur ces dilemmes.' };
+  }
+  if (necPct !== null && necPct <= 30) {
+    return { emoji: '🎭', name: 'L\'Hédoniste assumé', desc: 'Le confort prime dans vos choix — et vous l\'assumez. Le plaisir aussi a sa place dans l\'équation carbone.' };
+  }
+  if (necPct !== null && necPct >= 50 && necPct <= 70) {
+    return { emoji: '⚖️', name: 'L\'Équilibriste', desc: 'Vous naviguez entre nécessité et plaisir avec nuance. Vos choix montrent une réflexion au cas par cas.' };
+  }
+  return { emoji: '🌍', name: 'Le Citoyen climato-conscient', desc: 'Vous pesez chaque dilemme avec attention. Vos 13 choix dessinent une sensibilité personnelle unique.' };
+}
+
+function showResults() {
+  const profile = computeProfile();
+  const persona = getPersona(profile);
+
+  // --- Persona card ---
+  document.getElementById('persona-container').innerHTML = `
+    <div class="persona-card">
+      <div class="persona-emoji">${persona.emoji}</div>
+      <div class="persona-name">${persona.name}</div>
+      <div class="persona-desc">${persona.desc}</div>
+    </div>
+  `;
+
+  // --- Necessity vs Comfort gauge ---
+  const gaugeContainer = document.getElementById('gauge-container');
+  if (profile.necPct !== null) {
+    gaugeContainer.innerHTML = `
+      <div class="gauge-wrap">
+        <div class="gauge-label">NÉCESSITÉ VS CONFORT</div>
+        <div class="gauge-bar">
+          <div class="gauge-fill" style="width: 0%" data-target="${profile.necPct}"></div>
+          <div class="gauge-pct">${profile.necPct}% nécessité</div>
+        </div>
+        <div class="gauge-labels">
+          <span>🎭 Confort</span>
+          <span>🛡️ Nécessité</span>
+        </div>
+      </div>
+    `;
+    setTimeout(() => {
+      const fill = gaugeContainer.querySelector('.gauge-fill');
+      if (fill) fill.style.width = fill.dataset.target + '%';
+    }, 300);
+  } else {
+    gaugeContainer.innerHTML = '';
+  }
+
+  // --- Boldest / most rebel picks ---
+  const boldContainer = document.getElementById('bold-picks-container');
+  if (profile.rebelPicks.length > 0) {
+    const topRebels = profile.rebelPicks.slice(0, 3);
+    boldContainer.innerHTML = `
+      <div class="bold-picks">
+        <div class="gauge-label">VOS CHOIX LES PLUS AUDACIEUX</div>
+        ${topRebels.map(r => `
+          <div class="bold-pick-duel">
+            <div class="bold-duel-header">⚡ Duel #${r.duelNum}</div>
+            <div class="bold-duel-options">
+              <div class="bold-duel-chosen">
+                <span class="bold-duel-label">✅ Votre choix</span>
+                <span class="bold-duel-text">${r.winnerText}</span>
+              </div>
+              <div class="bold-duel-vs">VS</div>
+              <div class="bold-duel-rejected">
+                <span class="bold-duel-label">❌ Rejeté</span>
+                <span class="bold-duel-text">${r.loserText}</span>
+              </div>
+            </div>
+            <div class="bold-duel-stat">${r.expectedPct}% d'accord estimé (ELO ${r.eloDiff > 0 ? '+' : ''}${r.eloDiff})</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else {
+    boldContainer.innerHTML = '';
+  }
+
+  // --- Comparison stats ---
+  const comparison = document.getElementById('results-comparison');
+  let compHTML = '<div class="comparison-title">VOUS VS LA COMMUNAUTÉ</div>';
+  compHTML += `<div class="comparison-stat"><span>Alignement avec la majorité</span><span class="comparison-value">${profile.alignPct}%</span></div>`;
+  compHTML += `<div class="comparison-stat"><span>CO₂ moyen de vos choix</span><span class="comparison-value">${profile.avgCO2} kg</span></div>`;
+  compHTML += `<div class="comparison-stat"><span>Duels complétés</span><span class="comparison-value">${sessionVotes.length}</span></div>`;
+  compHTML += `<div class="comparison-stat"><span>Votes collectifs au total</span><span class="comparison-value">${totalVotes.toLocaleString('fr-FR')}</span></div>`;
+  if (profile.necPct !== null) {
+    compHTML += `<div class="comparison-stat"><span>Nécessité vs confort</span><span class="comparison-value">${profile.necPct}% nécessité</span></div>`;
+  }
+  comparison.innerHTML = compHTML;
+
+  // --- Duel-by-duel recap ---
+  const recapContainer = document.getElementById('recap-container');
+  recapContainer.innerHTML = `
+    <div class="recap-list">
+      <div class="gauge-label" style="margin-bottom:0.75rem">VOS 13 CHOIX</div>
+      ${sessionVotes.map((v, i) => {
+        const wElo = scoreById[v.winnerId] ? scoreById[v.winnerId].elo || 1200 : 1200;
+        const lElo = scoreById[v.loserId] ? scoreById[v.loserId].elo || 1200 : 1200;
+        const expectedPct = Math.round(100 / (1 + Math.pow(10, (lElo - wElo) / 400)));
+        let tagClass = 'majority', tagText = '';
+        if (expectedPct >= 60) { tagClass = 'majority'; tagText = `${expectedPct}% d'accord`; }
+        else if (expectedPct <= 40) { tagClass = 'rebel'; tagText = `${expectedPct}% d'accord`; }
+        else { tagClass = 'contested'; tagText = `${expectedPct}% — serré`; }
+        return `<div class="recap-item">
+          <div class="recap-num">${i + 1}</div>
+          <div class="recap-choice">
+            ${proposals[v.winnerIdx].text}
+            ${tagText ? `<br><span class="recap-tag ${tagClass}">${tagText}</span>` : ''}
+          </div>
+          <div class="recap-co2">${proposals[v.winnerIdx].co2} kg</div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+
+  // Show overlay with animation
+  const overlay = document.getElementById('results-overlay');
+  overlay.classList.add('visible');
+
+  // Launch confetti!
+  launchConfetti();
+}
+
+function restartSession() {
+  document.getElementById('results-overlay').classList.remove('visible');
+  sessionMode = true;
+  sessionStep = 0;
+  sessionVotes = [];
+  sessionPairs = generateSessionPairs();
+  localDuelCount = 0;
+  initProgressDots();
+  updateProgress();
+  updatePair();
+}
+
+function freePlay() {
+  document.getElementById('results-overlay').classList.remove('visible');
+  sessionMode = false;
+  updateProgress();
+  document.getElementById('pair-label').textContent =
+    `Mode libre — Lequel préféreriez-vous émettre ?`;
+  updatePair();
+}
+
+function showLeaderboardFromResults() {
+  document.getElementById('results-overlay').classList.remove('visible');
+  sessionMode = false;
+  updateProgress();
+  document.getElementById('pair-label').textContent =
+    `Mode libre — Lequel préféreriez-vous émettre ?`;
+  updatePair();
+  setTimeout(() => {
+    document.querySelector('.leaderboard-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 300);
+}
+
+// =============================================
+// Sharing (no cookies, no account — Web Share API or clipboard)
+// =============================================
+function shareResults() {
+  const profile = computeProfile();
+  const persona = getPersona(profile);
+
+  let text = `${persona.emoji} Mon profil Dilemmes Carbone : ${persona.name}\n\n`;
+  text += `${persona.desc}\n\n`;
+  text += `📊 Alignement communauté : ${profile.alignPct}%\n`;
+  text += `🌿 CO₂ moyen de mes choix : ${profile.avgCO2} kg\n`;
+  if (profile.necPct !== null) {
+    text += `⚖️ Nécessité vs confort : ${profile.necPct}% nécessité\n`;
+  }
+  if (profile.rebelPicks.length > 0) {
+    text += `⚡ ${profile.rebelPicks.length} choix audacieux\n`;
+  }
+
+  text += `\n🔗 https://pierromond.github.io/Carbone/`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: 'Mon profil Dilemmes Carbone',
+      text: text,
+      url: 'https://pierromond.github.io/Carbone/'
+    }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('📋 Résultats copiés dans le presse-papier !');
+    }).catch(() => {
+      showToast('Impossible de copier — partagez le lien manuellement');
+    });
+  }
+}
+
+// =============================================
+// Confetti animation
+// =============================================
+function launchConfetti() {
+  const container = document.getElementById('confetti-container');
+  container.innerHTML = '';
+  const colors = ['#c8a84b', '#5d8a45', '#e8e4d4', '#c45c3a', '#7a7660', '#4a90d9'];
+  const count = 80;
+
+  for (let i = 0; i < count; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + '%';
+    piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+    piece.style.animationDelay = (Math.random() * 1.5) + 's';
+    piece.style.width = (5 + Math.random() * 6) + 'px';
+    piece.style.height = (8 + Math.random() * 8) + 'px';
+    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    container.appendChild(piece);
+  }
+
+  // Cleanup after animation
+  setTimeout(() => { container.innerHTML = ''; }, 5000);
+}
+
+// =============================================
+// Toast notification
+// =============================================
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('visible');
+  setTimeout(() => toast.classList.remove('visible'), 3000);
+}
 
 // --- Database status indicator ---
 function setDbStatus(online, detail) {
@@ -760,14 +1854,10 @@ function setDbStatus(online, detail) {
 
 // --- ELO ---
 function computeElo(scores) {
-  // Recompute ELO from scratch based on win/loss counts
-  // Simple approximation: elo = 1200 + K * (wins - losses)
-  // More accurate: use win rate adjusted
   scores.forEach(s => {
     const total = s.wins + s.losses;
     if (total === 0) { s.elo = 1200; return; }
     const winRate = s.wins / total;
-    // Map win rate to ELO-like scale (logistic)
     const clampedRate = Math.max(0.01, Math.min(0.99, winRate));
     s.elo = 1200 + 400 * Math.log10(clampedRate / (1 - clampedRate)) + Math.log2(total + 1) * 5;
   });
@@ -791,6 +1881,26 @@ function playClick() {
   } catch(e) {}
 }
 
+function playComplete() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const notes = [523, 659, 784]; // C5, E5, G5 — cheerful chord
+    notes.forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.frequency.value = freq;
+      const t = audioCtx.currentTime + i * 0.12;
+      gain.gain.setValueAtTime(0.03, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+      osc.start(t);
+      osc.stop(t + 0.5);
+    });
+  } catch(e) {}
+}
+
 // --- Post-vote info ---
 function co2Equivalences(kg) {
   const km = Math.round(kg / 0.192);
@@ -807,11 +1917,11 @@ function showEquiv(kg) {
 function showStreak(pct) {
   const el = document.getElementById('streak-msg');
   if (pct >= 70) {
-    el.textContent = `🔥 ${pct} % des votants partagent votre choix !`;
+    el.textContent = `🔥 Choix populaire ! Score ELO estimé : ${pct}% en votre faveur`;
   } else if (pct <= 30) {
-    el.textContent = `⚡ Choix audacieux ! Seulement ${pct} % des votants sont d'accord`;
+    el.textContent = `⚡ Choix audacieux ! Score ELO : seulement ${pct}% en votre faveur`;
   } else {
-    el.textContent = `⚖️ Duel serré — ${pct} % des votants partagent votre choix`;
+    el.textContent = `⚖️ Duel serré — Score ELO : ${pct}% en votre faveur`;
   }
   el.classList.add('visible');
 }
@@ -823,7 +1933,7 @@ function hidePostVote() {
 
 // --- Real-time Firestore listener ---
 function listenForUpdates() {
-  if (unsubscribe) unsubscribe(); // cleanup previous listener
+  if (unsubscribe) unsubscribe();
   const coll = MODES[currentAppMode].coll;
 
   unsubscribe = onSnapshot(
@@ -842,7 +1952,10 @@ function listenForUpdates() {
       });
       totalVotes = totalWins;
       computeElo(scores);
-      document.getElementById('total-votes').textContent = totalVotes;
+      document.getElementById('total-votes').textContent = totalVotes.toLocaleString('fr-FR');
+      // Update welcome screen vote count too
+      const welcomeVotes = document.getElementById('welcome-votes');
+      if (welcomeVotes) welcomeVotes.textContent = totalVotes.toLocaleString('fr-FR');
       renderLeaderboard();
     },
     (error) => {
@@ -865,24 +1978,29 @@ function switchMode(mode) {
   scoreById = Object.fromEntries(scores.map(s => [s.id, s]));
   totalVotes = 0;
 
-  // Update UI
   document.getElementById('header-label').textContent = MODES[mode].label;
   document.getElementById('subtitle').textContent = MODES[mode].subtitle;
   document.getElementById('total-votes').textContent = '0';
   document.getElementById('leaderboard').innerHTML =
     '<div class="no-votes">Votez pour voir le classement apparaître…</div>';
 
-  // Update mode buttons
   document.getElementById('btn-standard').classList.toggle('active', mode === 'standard');
   document.getElementById('btn-labo').classList.toggle('active', mode === 'labo');
 
-  // Update URL for sharing
   const url = new URL(window.location);
   if (mode === 'standard') url.searchParams.delete('mode');
   else url.searchParams.set('mode', mode);
   history.replaceState(null, '', url);
 
-  // Re-listen to new Firestore collection
+  // Reinitialize session
+  if (sessionMode) {
+    sessionStep = 0;
+    sessionVotes = [];
+    sessionPairs = generateSessionPairs();
+    initProgressDots();
+    updateProgress();
+  }
+
   listenForUpdates();
   updatePair();
 }
@@ -890,8 +2008,6 @@ function switchMode(mode) {
 // --- Pair management ---
 function getRandomPair() {
   if (proposals.length < 2) return [0, 0];
-  // 10 % : paire thématique (propositions consécutives)
-  // 90 % : duel aléatoire
   const maxPairIdx = Math.floor(proposals.length / 2);
   if (Math.random() < 0.1 && maxPairIdx > 0) {
     const p = Math.floor(Math.random() * maxPairIdx);
@@ -909,14 +2025,22 @@ function updatePair() {
   voted = false;
   localDuelCount++;
   hidePostVote();
-  const [a, b] = getRandomPair();
+
+  // Get pair: session mode or free play
+  let a, b;
+  if (sessionMode && sessionStep < SESSION_SIZE && sessionPairs.length > 0) {
+    [a, b] = sessionPairs[sessionStep];
+  } else {
+    [a, b] = getRandomPair();
+  }
+
   currentA = a;
   currentB = b;
   document.getElementById('text-a').textContent = proposals[a].text;
   document.getElementById('text-b').textContent = proposals[b].text;
   document.getElementById('co2-a').textContent = `~${proposals[a].co2} kg CO₂`;
   document.getElementById('co2-b').textContent = `~${proposals[b].co2} kg CO₂`;
-  // Repère visuel CO₂ : colorer si écart > 50 %
+
   const wrapA = document.getElementById('co2-wrap-a');
   const wrapB = document.getElementById('co2-wrap-b');
   wrapA.className = 'card-co2';
@@ -926,8 +2050,16 @@ function updatePair() {
     if (coA > coB) { wrapA.classList.add('co2-high'); wrapB.classList.add('co2-low'); }
     else { wrapB.classList.add('co2-high'); wrapA.classList.add('co2-low'); }
   }
-  document.getElementById('pair-label').textContent =
-    `Duel #${localDuelCount} — Lequel préféreriez-vous émettre ?`;
+
+  // Update label
+  if (sessionMode && sessionStep < SESSION_SIZE) {
+    document.getElementById('pair-label').textContent =
+      `Duel ${sessionStep + 1}/${SESSION_SIZE} — Lequel préféreriez-vous émettre ?`;
+  } else {
+    document.getElementById('pair-label').textContent =
+      `Mode libre · Duel #${localDuelCount} — Lequel préféreriez-vous émettre ?`;
+  }
+
   const cardA = document.getElementById('card-a');
   const cardB = document.getElementById('card-b');
   cardA.classList.remove('winner', 'loser');
@@ -956,27 +2088,42 @@ async function vote(choice) {
   document.getElementById(winCard).classList.add('winner');
   document.getElementById(loseCard).classList.add('loser');
 
-  // Equivalence pédagogique
+  // Post-vote info
   showEquiv(proposals[winnerIdx].co2);
-
-  // Streak — montre le % d'accord si assez de données
-  const ws = scoreById[winnerId];
-  const wTotal = ws.wins + ws.losses;
-  if (wTotal >= 3) {
-    showStreak(Math.round(ws.wins / wTotal * 100));
+  const winnerElo = scoreById[winnerId] ? scoreById[winnerId].elo || 1200 : 1200;
+  const loserElo = scoreById[loserId] ? scoreById[loserId].elo || 1200 : 1200;
+  const eloPct = Math.round(100 / (1 + Math.pow(10, (loserElo - winnerElo) / 400)));
+  if (totalVotes >= 3) {
+    showStreak(eloPct);
   }
 
-  // Transition fluide vers le prochain duel (lancée immédiatement, indépendante du réseau)
+  // Track session vote
+  if (sessionMode) {
+    sessionVotes.push({ winnerIdx, loserIdx, winnerId, loserId });
+    sessionStep++;
+    updateProgress();
+  }
+
+  // Check if session is complete
+  const sessionComplete = sessionMode && sessionStep >= SESSION_SIZE;
+
+  // Transition to next duel (or results)
   const duel = document.getElementById('duel');
   setTimeout(() => {
-    duel.classList.add('transitioning');
-    setTimeout(() => {
-      updatePair();
-      duel.classList.remove('transitioning');
-    }, 300);
-  }, 900);
+    if (sessionComplete) {
+      // Session complete! Show results after a brief pause
+      playComplete();
+      setTimeout(() => showResults(), 400);
+    } else {
+      duel.classList.add('transitioning');
+      setTimeout(() => {
+        updatePair();
+        duel.classList.remove('transitioning');
+      }, 300);
+    }
+  }, 2500);
 
-  // Atomic Firestore update (en parallèle de la transition)
+  // Atomic Firestore update
   const coll = MODES[currentAppMode].coll;
   try {
     const batch = writeBatch(db);
@@ -994,7 +2141,7 @@ async function vote(choice) {
     scoreById[loserId].losses++;
     totalVotes++;
     computeElo(scores);
-    document.getElementById('total-votes').textContent = totalVotes;
+    document.getElementById('total-votes').textContent = totalVotes.toLocaleString('fr-FR');
     renderLeaderboard();
   }
 }
@@ -1055,6 +2202,13 @@ function renderLeaderboard() {
 // --- Expose to window for inline onclick handlers ---
 window.vote = vote;
 window.nextPair = function() {
+  if (sessionMode && sessionStep < SESSION_SIZE) {
+    // In session: skip counts as a duel, generate new pair for this slot
+    const n = proposals.length;
+    let a, b;
+    do { a = Math.floor(Math.random() * n); b = Math.floor(Math.random() * n); } while (a === b);
+    sessionPairs[sessionStep] = [a, b];
+  }
   const duel = document.getElementById('duel');
   duel.classList.add('transitioning');
   setTimeout(() => {
@@ -1064,6 +2218,10 @@ window.nextPair = function() {
 };
 window.showRanking = showRanking;
 window.switchMode = switchMode;
+window.startSession = startSession;
+window.restartSession = restartSession;
+window.freePlay = freePlay;
+window.shareResults = shareResults;
 
 // --- Theme toggle ---
 function toggleTheme() {
@@ -1097,16 +2255,35 @@ document.getElementById('card-a').addEventListener('keydown', e => {
 document.getElementById('card-b').addEventListener('keydown', e => {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); vote(1); }
 });
+// Arrow keys for quick navigation
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft') vote(0);
+  if (e.key === 'ArrowRight') vote(1);
+});
 
 // --- Initialize ---
+// Show welcome screen; hide main content until "Start"
+document.querySelector('header').style.display = 'none';
+document.getElementById('arena').style.display = 'none';
+
+// Start listening for vote counts (for welcome screen counter)
+listenForUpdates();
+
 // Read ?mode= from URL
 const urlMode = new URLSearchParams(window.location.search).get('mode');
 if (urlMode === 'labo') {
-  switchMode('labo');
-} else {
-  updatePair();
+  currentAppMode = 'labo';
+  proposals = MODES.labo.proposals;
+  scores = proposals.map(p => ({ id: p.id, text: p.text, co2: p.co2, wins: 0, losses: 0, elo: 1200 }));
+  scoreById = Object.fromEntries(scores.map(s => [s.id, s]));
+  document.getElementById('btn-standard').classList.remove('active');
+  document.getElementById('btn-labo').classList.add('active');
   listenForUpdates();
 }
+
+// Pre-generate first pair so it's ready when user starts
+sessionPairs = generateSessionPairs();
+updatePair();
 </script>
 </body>
 </html>
