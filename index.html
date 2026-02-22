@@ -714,6 +714,61 @@
     letter-spacing: 0.05em;
   }
   .welcome-count span { color: var(--accent); font-weight: 500; }
+
+  /* Mode selector on welcome page */
+  .welcome-mode-select {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+  .welcome-mode-option {
+    position: relative;
+    cursor: pointer;
+  }
+  .welcome-mode-option input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .welcome-mode-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.9rem 1.5rem;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: 6px;
+    transition: all 0.25s ease;
+    min-width: 160px;
+  }
+  .welcome-mode-option input:checked + .welcome-mode-card {
+    border-color: var(--accent);
+    background: var(--glow);
+    box-shadow: 0 0 20px rgba(200, 168, 75, 0.15);
+  }
+  .welcome-mode-card:hover {
+    border-color: var(--muted);
+  }
+  .welcome-mode-icon {
+    font-size: 1.5rem;
+  }
+  .welcome-mode-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: var(--text);
+  }
+  .welcome-mode-desc {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.3;
+  }
   .welcome-how {
     margin-top: 2.5rem;
     display: flex;
@@ -1170,11 +1225,65 @@
   /* ====== RESPONSIVE for new elements ====== */
   @media (max-width: 640px) {
     .welcome-how { flex-direction: column; align-items: center; }
+    .welcome-content { padding: 1.5rem 1.2rem; }
+    .welcome-title { font-size: clamp(2.2rem, 10vw, 3.5rem); margin-bottom: 1rem; }
+    .welcome-desc { font-size: 0.95rem; margin-bottom: 1.5rem; }
+    .welcome-badges { gap: 0.5rem; margin-bottom: 1.8rem; }
+    .welcome-badge { font-size: 0.6rem; padding: 0.35rem 0.65rem; }
+    .welcome-start { font-size: 1rem; padding: 0.85rem 2rem; }
+    .welcome-count { margin-top: 1.3rem; }
+    .welcome-mode-select { flex-direction: column; align-items: center; gap: 0.5rem; margin-bottom: 1.8rem; }
+    .welcome-mode-option { padding: 0.7rem 1.2rem; min-width: 200px; }
+
     .profile-label { width: 5rem; font-size: 0.6rem; }
     .profile-icon { width: 1.5rem; font-size: 1rem; }
     .progress-dots { gap: 0.35rem; }
     .progress-dot { width: 6px; height: 6px; }
     .results-actions { flex-direction: column; align-items: stretch; }
+
+    /* Streak / post-vote always visible on mobile */
+    .post-vote-info {
+      min-height: 3.5rem;
+      margin: 0.75rem 0 0.5rem;
+      padding: 0 0.5rem;
+    }
+    .equiv-bubble {
+      font-size: 0.6rem;
+      padding: 0.25rem 0.5rem;
+      letter-spacing: 0.02em;
+      line-height: 1.5;
+    }
+    .streak-msg {
+      font-size: 0.65rem;
+      margin-top: 0.25rem;
+      line-height: 1.4;
+    }
+
+    /* Bold duel picks stack vertically on mobile */
+    .bold-duel-options {
+      flex-direction: column;
+    }
+    .bold-duel-vs {
+      align-self: center;
+    }
+    .bold-pick-duel {
+      padding: 0.7rem 0.8rem;
+    }
+
+    /* Results overlay mobile */
+    .results-content {
+      padding: 2rem 1.2rem 3rem;
+    }
+    .persona-card {
+      padding: 1.5rem 1rem;
+    }
+
+    /* Recap items tighter on mobile */
+    .recap-item {
+      padding: 0.6rem 0.3rem;
+      font-size: 0.8rem;
+      gap: 0.5rem;
+    }
   }
 </style>
 </head>
@@ -1205,6 +1314,24 @@
       <span class="welcome-badge">⏱ ~3 min</span>
       <span class="welcome-badge">🔒 100 % anonyme</span>
       <span class="welcome-badge">📊 Résultats en direct</span>
+    </div>
+    <div class="welcome-mode-select">
+      <label class="welcome-mode-option">
+        <input type="radio" name="welcome-mode" value="standard" checked onchange="preSelectMode('standard')">
+        <div class="welcome-mode-card">
+          <div class="welcome-mode-icon">🎯</div>
+          <div class="welcome-mode-name">Standard</div>
+          <div class="welcome-mode-desc">Dilemmes du quotidien</div>
+        </div>
+      </label>
+      <label class="welcome-mode-option">
+        <input type="radio" name="welcome-mode" value="labo" onchange="preSelectMode('labo')">
+        <div class="welcome-mode-card">
+          <div class="welcome-mode-icon">🔬</div>
+          <div class="welcome-mode-name">Labo recherche</div>
+          <div class="welcome-mode-desc">Contexte laboratoire</div>
+        </div>
+      </label>
     </div>
     <button class="welcome-start" onclick="startSession()">Commencer l'expérience</button>
     <div class="welcome-count"><span id="welcome-votes">0</span> votes déjà enregistrés</div>
@@ -1520,7 +1647,20 @@ function updateProgress() {
 // =============================================
 // Welcome screen
 // =============================================
+function preSelectMode(mode) {
+  // Apply mode switch when user selects on welcome screen
+  if (mode !== currentAppMode) {
+    switchMode(mode);
+  }
+}
+
 function startSession() {
+  // Apply mode from welcome radio if different
+  const selectedRadio = document.querySelector('input[name="welcome-mode"]:checked');
+  if (selectedRadio && selectedRadio.value !== currentAppMode) {
+    switchMode(selectedRadio.value);
+  }
+
   // Hide welcome
   document.getElementById('welcome-overlay').classList.add('hidden');
 
@@ -2278,6 +2418,9 @@ if (urlMode === 'labo') {
   scoreById = Object.fromEntries(scores.map(s => [s.id, s]));
   document.getElementById('btn-standard').classList.remove('active');
   document.getElementById('btn-labo').classList.add('active');
+  // Sync welcome radio
+  const laboRadio = document.querySelector('input[name="welcome-mode"][value="labo"]');
+  if (laboRadio) laboRadio.checked = true;
   listenForUpdates();
 }
 
