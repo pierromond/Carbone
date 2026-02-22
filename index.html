@@ -592,24 +592,47 @@
   }
   .equiv-bubble {
     font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: var(--accent);
     opacity: 0;
     transition: opacity 0.4s ease;
-    padding: 0.3rem 0.8rem;
+    padding: 0.4rem 1rem;
     display: inline-block;
     letter-spacing: 0.05em;
+    background: rgba(200, 168, 75, 0.08);
+    border: 1px solid rgba(200, 168, 75, 0.15);
+    border-radius: 20px;
+    line-height: 1.5;
   }
   .equiv-bubble.visible { opacity: 1; }
   .streak-msg {
     font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    color: var(--accent2);
+    font-size: 0.8rem;
+    font-weight: 500;
     opacity: 0;
     transition: opacity 0.4s ease;
-    margin-top: 0.3rem;
+    margin-top: 0.5rem;
+    padding: 0.45rem 1rem;
+    display: inline-block;
+    border-radius: 20px;
+    line-height: 1.4;
   }
   .streak-msg.visible { opacity: 1; }
+  .streak-msg.streak-popular {
+    color: var(--accent2);
+    background: rgba(93, 138, 69, 0.12);
+    border: 1px solid rgba(93, 138, 69, 0.25);
+  }
+  .streak-msg.streak-bold {
+    color: var(--danger);
+    background: rgba(196, 92, 58, 0.1);
+    border: 1px solid rgba(196, 92, 58, 0.2);
+  }
+  .streak-msg.streak-contested {
+    color: var(--accent);
+    background: rgba(200, 168, 75, 0.1);
+    border: 1px solid rgba(200, 168, 75, 0.2);
+  }
 
   /* ====== WELCOME OVERLAY ====== */
   .welcome-overlay {
@@ -620,6 +643,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     transition: opacity 0.7s ease, visibility 0.7s ease;
   }
   .welcome-overlay.hidden {
@@ -631,6 +656,8 @@
     text-align: center;
     max-width: 580px;
     padding: 2rem;
+    width: 100%;
+    margin: auto;
     animation: welcome-in 1s ease both;
   }
   @keyframes welcome-in {
@@ -1225,15 +1252,30 @@
   /* ====== RESPONSIVE for new elements ====== */
   @media (max-width: 640px) {
     .welcome-how { flex-direction: column; align-items: center; }
-    .welcome-content { padding: 1.5rem 1.2rem; }
-    .welcome-title { font-size: clamp(2.2rem, 10vw, 3.5rem); margin-bottom: 1rem; }
-    .welcome-desc { font-size: 0.95rem; margin-bottom: 1.5rem; }
-    .welcome-badges { gap: 0.5rem; margin-bottom: 1.8rem; }
-    .welcome-badge { font-size: 0.6rem; padding: 0.35rem 0.65rem; }
-    .welcome-start { font-size: 1rem; padding: 0.85rem 2rem; }
-    .welcome-count { margin-top: 1.3rem; }
-    .welcome-mode-select { flex-direction: column; align-items: center; gap: 0.5rem; margin-bottom: 1.8rem; }
-    .welcome-mode-option { padding: 0.7rem 1.2rem; min-width: 200px; }
+    .welcome-overlay {
+      align-items: flex-start;
+      padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 0);
+    }
+    .welcome-content {
+      padding: 1.5rem 1rem;
+      margin: auto;
+    }
+    .welcome-label { font-size: 0.55rem; letter-spacing: 0.25em; margin-bottom: 1.2rem; }
+    .welcome-title { font-size: clamp(1.8rem, 9vw, 3rem); margin-bottom: 0.75rem; }
+    .welcome-desc { font-size: 0.85rem; margin-bottom: 1.2rem; line-height: 1.6; }
+    .welcome-badges { gap: 0.4rem; margin-bottom: 1.2rem; }
+    .welcome-badge { font-size: 0.55rem; padding: 0.3rem 0.55rem; }
+    .welcome-start { font-size: 0.95rem; padding: 0.75rem 1.8rem; }
+    .welcome-count { margin-top: 1rem; font-size: 0.6rem; }
+    .welcome-mode-select { flex-direction: row; gap: 0.5rem; margin-bottom: 1.2rem; }
+    .welcome-mode-card { min-width: 0; padding: 0.7rem 0.8rem; gap: 0.25rem; }
+    .welcome-mode-icon { font-size: 1.2rem; }
+    .welcome-mode-name { font-size: 0.65rem; }
+    .welcome-mode-desc { font-size: 0.5rem; }
+    .welcome-how { margin-top: 1.5rem; gap: 1rem; }
+    .how-step { max-width: 120px; }
+    .how-num { width: 24px; height: 24px; font-size: 0.55rem; }
+    .how-text { font-size: 0.65rem; }
 
     .profile-label { width: 5rem; font-size: 0.6rem; }
     .profile-icon { width: 1.5rem; font-size: 1rem; }
@@ -1243,20 +1285,19 @@
 
     /* Streak / post-vote always visible on mobile */
     .post-vote-info {
-      min-height: 3.5rem;
+      min-height: 4rem;
       margin: 0.75rem 0 0.5rem;
-      padding: 0 0.5rem;
+      padding: 0 0.25rem;
     }
     .equiv-bubble {
-      font-size: 0.6rem;
-      padding: 0.25rem 0.5rem;
+      font-size: 0.65rem;
+      padding: 0.35rem 0.75rem;
       letter-spacing: 0.02em;
-      line-height: 1.5;
     }
     .streak-msg {
-      font-size: 0.65rem;
-      margin-top: 0.25rem;
-      line-height: 1.4;
+      font-size: 0.72rem;
+      margin-top: 0.4rem;
+      padding: 0.4rem 0.85rem;
     }
 
     /* Bold duel picks stack vertically on mobile */
@@ -1289,7 +1330,7 @@
 </head>
 <body>
 
-<div class="mode-switcher" id="mode-switcher">
+<div class="mode-switcher" id="mode-switcher" style="display:none">
   <div class="mode-indicator">mode</div>
   <button class="mode-btn active" id="btn-standard" onclick="switchMode('standard')">
     <span class="mode-icon">🎯</span>Standard
@@ -1664,6 +1705,9 @@ function startSession() {
   // Hide welcome
   document.getElementById('welcome-overlay').classList.add('hidden');
 
+  // Hide mode switcher during session
+  document.getElementById('mode-switcher').style.display = 'none';
+
   // Initialize session
   sessionMode = true;
   sessionStep = 0;
@@ -1889,6 +1933,7 @@ function restartSession() {
 
 function freePlay() {
   document.getElementById('results-overlay').classList.remove('visible');
+  document.getElementById('mode-switcher').style.display = '';
   sessionMode = false;
   updateProgress();
   document.getElementById('pair-label').textContent =
@@ -1898,6 +1943,7 @@ function freePlay() {
 
 function showLeaderboardFromResults() {
   document.getElementById('results-overlay').classList.remove('visible');
+  document.getElementById('mode-switcher').style.display = '';
   sessionMode = false;
   updateProgress();
   document.getElementById('pair-label').textContent =
@@ -2056,19 +2102,24 @@ function showEquiv(kg) {
 
 function showStreak(pct) {
   const el = document.getElementById('streak-msg');
+  el.classList.remove('streak-popular', 'streak-bold', 'streak-contested');
   if (pct >= 70) {
-    el.textContent = `🔥 Choix populaire ! Score ELO estimé : ${pct}% en votre faveur`;
+    el.textContent = `🔥 Choix populaire ! ${pct}% en votre faveur`;
+    el.classList.add('streak-popular');
   } else if (pct <= 30) {
-    el.textContent = `⚡ Choix audacieux ! Score ELO : seulement ${pct}% en votre faveur`;
+    el.textContent = `⚡ Choix audacieux ! Seulement ${pct}% en votre faveur`;
+    el.classList.add('streak-bold');
   } else {
-    el.textContent = `⚖️ Duel serré — Score ELO : ${pct}% en votre faveur`;
+    el.textContent = `⚖️ Duel serré — ${pct}% en votre faveur`;
+    el.classList.add('streak-contested');
   }
   el.classList.add('visible');
 }
 
 function hidePostVote() {
   document.getElementById('equiv-bubble').classList.remove('visible');
-  document.getElementById('streak-msg').classList.remove('visible');
+  const streak = document.getElementById('streak-msg');
+  streak.classList.remove('visible', 'streak-popular', 'streak-bold', 'streak-contested');
 }
 
 // --- Real-time Firestore listener ---
