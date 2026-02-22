@@ -745,6 +745,7 @@
   /* Mode selector on welcome page */
   .welcome-mode-select {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.75rem;
     justify-content: center;
     margin-bottom: 2rem;
@@ -752,6 +753,8 @@
   .welcome-mode-option {
     position: relative;
     cursor: pointer;
+    flex: 1 1 130px;
+    max-width: 200px;
   }
   .welcome-mode-option input {
     position: absolute;
@@ -764,12 +767,12 @@
     flex-direction: column;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.9rem 1.5rem;
+    padding: 0.9rem 1rem;
     border: 1px solid var(--border);
     background: var(--surface);
     border-radius: 6px;
     transition: all 0.25s ease;
-    min-width: 160px;
+    height: 100%;
   }
   .welcome-mode-option input:checked + .welcome-mode-card {
     border-color: var(--accent);
@@ -1267,8 +1270,9 @@
     .welcome-badge { font-size: 0.55rem; padding: 0.3rem 0.55rem; }
     .welcome-start { font-size: 0.95rem; padding: 0.75rem 1.8rem; }
     .welcome-count { margin-top: 1rem; font-size: 0.6rem; }
-    .welcome-mode-select { flex-direction: row; gap: 0.5rem; margin-bottom: 1.2rem; }
-    .welcome-mode-card { min-width: 0; padding: 0.7rem 0.8rem; gap: 0.25rem; }
+    .welcome-mode-select { flex-direction: row; gap: 0.4rem; margin-bottom: 1.2rem; }
+    .welcome-mode-option { flex: 1 1 90px; max-width: 120px; }
+    .welcome-mode-card { min-width: 0; padding: 0.6rem 0.5rem; gap: 0.2rem; }
     .welcome-mode-icon { font-size: 1.2rem; }
     .welcome-mode-name { font-size: 0.65rem; }
     .welcome-mode-desc { font-size: 0.5rem; }
@@ -1336,7 +1340,10 @@
     <span class="mode-icon">🎯</span>Standard
   </button>
   <button class="mode-btn" id="btn-labo" onclick="switchMode('labo')">
-    <span class="mode-icon">🔬</span>Labo recherche
+    <span class="mode-icon">🔬</span>Labo
+  </button>
+  <button class="mode-btn" id="btn-famille" onclick="switchMode('famille')">
+    <span class="mode-icon">👨‍👩‍👧</span>Famille
   </button>
 </div>
 
@@ -1363,6 +1370,14 @@
           <div class="welcome-mode-icon">🎯</div>
           <div class="welcome-mode-name">Standard</div>
           <div class="welcome-mode-desc">Dilemmes du quotidien</div>
+        </div>
+      </label>
+      <label class="welcome-mode-option">
+        <input type="radio" name="welcome-mode" value="famille" onchange="preSelectMode('famille')">
+        <div class="welcome-mode-card">
+          <div class="welcome-mode-icon">👨‍👩‍👧</div>
+          <div class="welcome-mode-name">Famille</div>
+          <div class="welcome-mode-desc">100 dilemmes familiaux</div>
         </div>
       </label>
       <label class="welcome-mode-option">
@@ -1500,6 +1515,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebas
 import { getFirestore, collection, doc, setDoc, increment, onSnapshot, writeBatch } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 import { standardProposals } from './proposals-standard.js';
 import { laboProposals } from './proposals-labo.js';
+import { familleProposals } from './proposals-famille.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBjBb9ta2_fkgmc40mbQZlMiWjuBdE5rM4",
@@ -1577,6 +1593,12 @@ const MODES = {
     proposals: laboProposals,
     label: 'Labo de recherche · Protocole scientifique',
     subtitle: 'Version recherche : vos réponses alimentent une étude sur la perception des arbitrages carbone. Chaque vote compte pour la science.'
+  },
+  famille: {
+    coll: 'carbone_famille',
+    proposals: familleProposals,
+    label: 'Vie de famille · Dilemmes du quotidien',
+    subtitle: 'Chaque choix du quotidien familial a un coût climatique. 100 dilemmes pour explorer vos priorités et les comparer avec d\'autres familles.'
   }
 };
 
@@ -2177,6 +2199,7 @@ function switchMode(mode) {
 
   document.getElementById('btn-standard').classList.toggle('active', mode === 'standard');
   document.getElementById('btn-labo').classList.toggle('active', mode === 'labo');
+  document.getElementById('btn-famille').classList.toggle('active', mode === 'famille');
 
   const url = new URL(window.location);
   if (mode === 'standard') url.searchParams.delete('mode');
@@ -2460,18 +2483,19 @@ document.getElementById('arena').style.display = 'none';
 // Start listening for vote counts (for welcome screen counter)
 listenForUpdates();
 
-// Read ?mode= from URL
+// Read ?mode= from URL — supports any mode in MODES
 const urlMode = new URLSearchParams(window.location.search).get('mode');
-if (urlMode === 'labo') {
-  currentAppMode = 'labo';
-  proposals = MODES.labo.proposals;
+if (urlMode && MODES[urlMode] && urlMode !== 'standard') {
+  currentAppMode = urlMode;
+  proposals = MODES[urlMode].proposals;
   scores = proposals.map(p => ({ id: p.id, text: p.text, co2: p.co2, wins: 0, losses: 0, elo: 1200 }));
   scoreById = Object.fromEntries(scores.map(s => [s.id, s]));
-  document.getElementById('btn-standard').classList.remove('active');
-  document.getElementById('btn-labo').classList.add('active');
-  // Sync welcome radio
-  const laboRadio = document.querySelector('input[name="welcome-mode"][value="labo"]');
-  if (laboRadio) laboRadio.checked = true;
+  Object.keys(MODES).forEach(m => {
+    const btn = document.getElementById('btn-' + m);
+    if (btn) btn.classList.toggle('active', m === urlMode);
+  });
+  const modeRadio = document.querySelector(`input[name="welcome-mode"][value="${urlMode}"]`);
+  if (modeRadio) modeRadio.checked = true;
   listenForUpdates();
 }
 
